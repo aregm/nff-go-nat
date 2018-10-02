@@ -8,8 +8,11 @@ github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/gopacket v1.1.15 h1:M6W3hwQXo5rq1wyhRByGhqOw0m9p+HWtUJ3Bj4/fT6E=
 github.com/google/gopacket v1.1.15/go.mod h1:UCLx9mCmAwsVbn6qQl1WIEt2SO7Nd2fD0th1TBAsqBw=
+github.com/intel-go/nff-go v0.0.0-20180921201744-1fbebd4fd0f2 h1:KDM+zxw97jpFJq9oKfvHT4dguYvHVz45Ax9b5+VFZkk=
 github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191 h1:NS6qVx9y9FIEdveyLKjXs7LcZgWdGzKgVwoltKRbUTA=
 github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
+github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204 h1:qty4fLwai6XppC+fnDOk21OfCYWbnxYiBwnoN3eSE54=
+github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
