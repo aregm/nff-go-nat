@@ -3,7 +3,7 @@
 ## What it is
 
 NAT example is a fully functional NAT (network address translation)
-program nat network function for [NFF-Go
+program written using  [NFF-Go
 framework](https://github.com/intel-go/nff-go). It has support for
 IPv4 and IPv6, ARP, ND, ICMP, ICMPv6, DHCP and DHCPv6 protocols with
 remote control over GRPC.
