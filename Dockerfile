@@ -1,27 +1,16 @@
-FROM ubuntu:bionic
+# Copyright 2017 Intel Corporation.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
 
-ENV GO_VERSION 1.9
-ENV GOPATH /gopath
-ENV GOROOT /usr/lib/go-${GO_VERSION}
+ARG USER_NAME
+FROM ${USER_NAME}/nff-go-base
 
-ENV PATH ${GOROOT}/bin:${GOPATH}/bin:${PATH}
-ENV NFF_GO_DIR /gopath/src/github.com/intel-go/nff-go
+LABEL RUN docker run -it --privileged -v /sys/bus/pci/drivers:/sys/bus/pci/drivers -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages -v /sys/devices/system/node:/sys/devices/system/node -v /dev:/dev --name NAME -e NAME=NAME -e IMAGE=IMAGE IMAGE
 
-ARG MAKEFLAGS=-j2
+RUN dnf -y install iputils httpd wget; dnf clean all
 
-RUN apt-get -q update && apt-get -q -y install \
-    make \
-    git \
-    curl \
-    wget \
-    golang-${GO_VERSION} \
-    libpcap-dev \
-    libelf-dev \
-    hugepages  \
-    libnuma-dev \
-    libhyperscan-dev
-
-RUN mkdir -p ${NFF_GO_DIR}
-COPY . ${NFF_GO_DIR}
-
-WORKDIR ${NFF_GO_DIR}
+WORKDIR /workdir
+COPY nat .
+COPY config.json .
+COPY config2ports.json .
+COPY config-vlan.json .
