@@ -14,4 +14,6 @@ To build you need to first check out NFF-Go framework repository and
 build DPDK there with `make`. After that execute `source env.sh`
 script to initialize necessary variables to build native code and run
 `go build` or `go install ./...`. Main executable is `nff-go-nat` and
-there is also a GRPC command line client in `client` directory.
+there is also a GRPC command line client in `client` directory. NAT
+example uses new Go 1.11 go.mod mechanism of fetching dependencies and
+should be build outside of GOPATH.
