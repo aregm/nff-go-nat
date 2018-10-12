@@ -10,7 +10,7 @@ LABEL RUN docker run -it --privileged -v /sys/bus/pci/drivers:/sys/bus/pci/drive
 RUN dnf -y install iputils httpd wget; dnf clean all
 
 WORKDIR /workdir
-COPY nat .
+COPY nff-go-nat .
 COPY client/client .
 COPY config.json .
 COPY config-vlan.json .

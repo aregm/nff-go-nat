@@ -20,7 +20,7 @@ clean:
 
 # --------- Docker images build rules
 
-IMAGENAME=nat
+IMAGENAME=nff-go-nat
 BASEIMAGE=nff-go-base
 # Add user name to generated images
 ifdef NFF_GO_IMAGE_PREFIX
