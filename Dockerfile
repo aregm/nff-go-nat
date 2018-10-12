@@ -11,6 +11,10 @@ RUN dnf -y install iputils httpd wget; dnf clean all
 
 WORKDIR /workdir
 COPY nat .
+COPY client/client .
 COPY config.json .
-COPY config2ports.json .
 COPY config-vlan.json .
+COPY config-dhcp.json .
+COPY config-kni.json .
+COPY config-kni-dhcp.json .
+COPY config2ports.json .

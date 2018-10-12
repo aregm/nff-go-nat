@@ -73,9 +73,15 @@ cleanall: .check-deploy-env clean-images
 .PHONY: .check-test-env
 .check-test-env: .check-defined-NFF_GO $(NFF_GO)/test/framework/main/tf
 
-.PHONY: run-stability
-run-stability: .check-test-env test/stability-nat.json
-	tf test/stability-nat.json
+.PHONY: test-stability
+test-stability: .check-test-env test/stability-nat.json
+	$(NFF_GO)/test/framework/main/tf test/stability-nat.json
+	$(NFF_GO)/test/framework/main/tf test/stability-nat-vlan.json
+
+.PHONY: test-performance
+test-performance: .check-test-env test/perf-nat.json
+	$(NFF_GO)/test/framework/main/tf test/perf-nat.json
+	$(NFF_GO)/test/framework/main/tf test/perf-nat-vlan.json
 
 # --------- Utility rules
 
