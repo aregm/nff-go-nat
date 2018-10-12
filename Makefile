@@ -71,23 +71,23 @@ cleanall: .check-deploy-env clean-images
 # --------- Test execution rules
 
 .PHONY: .check-test-env
-.check-test-env: .check-defined-NFF_GO $(NFF_GO)/test/framework/main/tf
+.check-test-env: .check-defined-NFF_GO .check-defined-NFF_GO_HOSTS $(NFF_GO)/test/framework/main/tf
 
 .PHONY: test-stability
 test-stability: .check-test-env test/stability-nat.json
-	$(NFF_GO)/test/framework/main/tf test/stability-nat.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-stabilityresults -config test/stability-nat.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-stability-vlan
 test-stability-vlan: .check-test-env test/stability-nat-vlan.json
-	$(NFF_GO)/test/framework/main/tf test/stability-nat-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-stabilityresults -config test/stability-nat-vlan.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-performance
 test-performance: .check-test-env test/perf-nat.json
-	$(NFF_GO)/test/framework/main/tf test/perf-nat.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-perfresults -config test/perf-nat.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-performance-vlan
 test-performance-vlan: .check-test-env test/perf-nat-vlan.json
-	$(NFF_GO)/test/framework/main/tf test/perf-nat-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-perfresults -config test/perf-nat-vlan.json -hosts $(NFF_GO_HOSTS)
 
 # --------- Utility rules
 
