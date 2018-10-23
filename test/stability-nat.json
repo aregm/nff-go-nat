@@ -62,6 +62,27 @@
             ]
         },
         {
+            "name": "PingThroughNAT",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.16.2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                }
+            ]
+        },
+        {
             "name": "NATDownloadFile",
             "test-time": 60000000000,
             "test-type": "TestTypeScenario",
@@ -71,6 +92,97 @@
                     "app-type": "TestAppGo",
                     "exec-cmd": [
                         "sh", "-c", "sleep 10; wget --no-proxy http://192.168.16.2/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNAT_V6_FromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd14::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNAT_V6_FromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd16::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNAT_V6",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd16::2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NAT_V6_DownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd16::2]/1m.bin && echo TEST PASSED || echo TEST FAILED"
                     ]
                 },
                 {

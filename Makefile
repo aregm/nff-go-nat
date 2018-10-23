@@ -15,7 +15,7 @@ nff-go-nat: .check-env Makefile nat.go $(wildcard nat/*.go)
 
 .PHONY: clean
 clean:
-	-rm nat
+	-rm nff-go-nat
 	-rm client/client
 
 # --------- Docker images build rules
