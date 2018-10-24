@@ -104,6 +104,34 @@
             ]
         },
         {
+            "name": "NATDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.16.1:8080/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
             "name": "PingNAT_V6_FromPrivate",
             "test-time": 60000000000,
             "test-type": "TestTypeScenario",
@@ -190,6 +218,34 @@
                     "app-type": "TestAppGo",
                     "exec-cmd": [
                         "./nff-go-nat", "-config", "config.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NAT_V6_DownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd16::1]:8080/1m.bin && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
