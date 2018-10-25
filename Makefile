@@ -7,11 +7,18 @@
 .PHONY: all
 all: nff-go-nat client/client
 
+.PHONY: debug
+debug: | .set-debug all
+
+.PHONY: .set-debug
+.set-debug:
+	$(eval GO_COMPILE_FLAGS := -gcflags=all='-N -l')
+
 client/client: .check-env Makefile client/client.go
-	cd client && go build
+	cd client && go build $(GO_COMPILE_FLAGS)
 
 nff-go-nat: .check-env Makefile nat.go $(wildcard nat/*.go)
-	go build
+	go build $(GO_COMPILE_FLAGS)
 
 .PHONY: clean
 clean:
