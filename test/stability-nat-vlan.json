@@ -91,7 +91,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.2/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.2/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 },
                 {
@@ -126,7 +126,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.1:8080/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.1:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
@@ -210,7 +210,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::2]/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::2]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 },
                 {
@@ -245,7 +245,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]:8080/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
