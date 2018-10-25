@@ -22,6 +22,8 @@ github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191 h1:NS6qVx9y9FIEdve
 github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
 github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204 h1:qty4fLwai6XppC+fnDOk21OfCYWbnxYiBwnoN3eSE54=
 github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
+github.com/intel-go/nff-go v0.0.0-20181025212503-86076d68cc4a h1:z1pdHMktxBobC29+8b4nhP5+QpImMHuoYND0cXrgpkQ=
+github.com/intel-go/nff-go v0.0.0-20181025212503-86076d68cc4a/go.mod h1:n+oCFN0hmbHg1l3ifQcowWg7sRcHaGpm+OWm6s8NKBk=
 github.com/intel-go/nff-go v0.6.1 h1:C4BX9X52MtzQbEaFhT0RFl/mbKNQq5byn5/byK0Q6Vs=
 github.com/intel-go/nff-go v0.6.1/go.mod h1:n+oCFN0hmbHg1l3ifQcowWg7sRcHaGpm+OWm6s8NKBk=
 github.com/jtolds/gls v4.2.1+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
