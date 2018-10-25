@@ -430,6 +430,10 @@ func ReadConfig(fileName string) error {
 				NeedDHCP = true
 			}
 
+			if port.KNIName != "" {
+				NeedKNI = true
+			}
+
 			for fpi := range port.ForwardPorts {
 				fp := &port.ForwardPorts[fpi]
 				err := port.checkPortForwarding(fp)
