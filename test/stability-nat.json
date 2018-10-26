@@ -249,6 +249,342 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "PingNATKNIFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.14.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNIFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.16.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNATKNI",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.16.2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.16.2/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.16.1:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFileFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.14.1/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFileFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.16.1/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI_V6_FromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd14::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI_V6_FromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd16::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNATKNI_V6",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd16::2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_DownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd16::2]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_DownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd16::1]:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_DownloadFileFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd14::1]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_DownloadFileFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd16::1]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
         }
     ]
 }

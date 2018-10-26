@@ -119,7 +119,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config.json"
+                        "./nff-go-nat", "-config", "config-vlan.json"
                     ]
                 },
                 {
@@ -238,7 +238,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config.json"
+                        "./nff-go-nat", "-config", "config-vlan.json"
                     ]
                 },
                 {
@@ -246,6 +246,342 @@
                     "app-type": "TestAppGo",
                     "exec-cmd": [
                         "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI-VLANFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.114.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI-VLANFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.116.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNATKNI-VLAN",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.116.2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI-VLANDownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.2/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.1:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI-VLANDownloadFileFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.114.1/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNIDownloadFileFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.1/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI_V6-VLANFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd84::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNATKNI_V6-VLANFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd86::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNATKNI_V6-VLAN",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd86::2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6-VLANDownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::2]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_VLANDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6-VLANDownloadFileFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd84::1]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_V6_VLANDownloadFileFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
