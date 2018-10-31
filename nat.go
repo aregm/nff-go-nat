@@ -17,12 +17,14 @@ import (
 
 func main() {
 	// Parse arguments
-	cores := flag.String("cores", "", "Specify CPU cores to use")
-	configFile := flag.String("config", "config.json", "Specify config file name")
-	flag.BoolVar(&nat.NoCalculateChecksum, "nocsum", false, "Specify whether to calculate checksums in modified packets")
-	flag.BoolVar(&nat.NoHWTXChecksum, "nohwcsum", false, "Specify whether to use hardware offloading for checksums calculation (requires -csum)")
-	noscheduler := flag.Bool("no-scheduler", false, "disable scheduler")
-	dpdkLogLevel := flag.String("dpdk", "--log-level=0", "Passes an arbitrary argument to dpdk EAL")
+	cores := flag.String("cores", "", "Specify CPU cores to use.")
+	configFile := flag.String("config", "config.json", "Specify config file name.")
+	flag.BoolVar(&nat.NoCalculateChecksum, "nocsum", false, "Specify whether to calculate checksums in modified packets.")
+	flag.BoolVar(&nat.NoHWTXChecksum, "nohwcsum", false, "Specify whether to use hardware offloading for checksums calculation (requires -csum).")
+	noscheduler := flag.Bool("no-scheduler", false, "Disable scheduler.")
+	setKniIP := flag.Bool("set-kni-IP", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
+	bringUpKniInterfaces := flag.Bool("bring-up-kni", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
+	dpdkLogLevel := flag.String("dpdk", "--log-level=0", "Passes an arbitrary argument to dpdk EAL.")
 	flag.Parse()
 
 	// Set up reaction to SIGINT (Ctrl-C)
@@ -30,7 +32,7 @@ func main() {
 	signal.Notify(c, os.Interrupt)
 
 	// Read config
-	flow.CheckFatal(nat.ReadConfig(*configFile))
+	flow.CheckFatal(nat.ReadConfig(*configFile, *setKniIP, *bringUpKniInterfaces))
 
 	// Init NFF-GO system at 16 available cores
 	nffgoconfig := flow.Config{
@@ -61,7 +63,7 @@ func main() {
 	flow.CheckFatal(flow.SystemInitPortsAndMemory())
 
 	// Start DHCP client
-	if nat.NeedDHCP {
+	if nat.NeedDHCP || *setKniIP {
 		nat.StartDHCPClient()
 	}
 

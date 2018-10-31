@@ -99,6 +99,7 @@ type ipv4Subnet struct {
 	Addr            uint32
 	Mask            uint32
 	addressAcquired bool
+	kniAddressSet   bool
 	ds              dhcpState
 }
 
@@ -137,6 +138,7 @@ type ipv6Subnet struct {
 	llAddr          [common.IPv6AddrLen]uint8
 	llMulticastAddr [common.IPv6AddrLen]uint8
 	addressAcquired bool
+	kniAddressSet   bool
 	ds              dhcpv6State
 }
 
@@ -212,8 +214,10 @@ type portPair struct {
 
 // Config for NAT.
 type Config struct {
-	HostName  string     `json:"host-name"`
-	PortPairs []portPair `json:"port-pairs"`
+	HostName             string     `json:"host-name"`
+	PortPairs            []portPair `json:"port-pairs"`
+	setKniIP             bool
+	bringUpKniInterfaces bool
 }
 
 // Type used to pass handler index to translation functions.
@@ -387,7 +391,7 @@ func (out *macAddress) UnmarshalJSON(b []byte) error {
 }
 
 // ReadConfig function reads and parses config file
-func ReadConfig(fileName string) error {
+func ReadConfig(fileName string, setKniIP, bringUpKniInterfaces bool) error {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return err
@@ -397,6 +401,13 @@ func ReadConfig(fileName string) error {
 	err = decoder.Decode(&Natconfig)
 	if err != nil {
 		return err
+	}
+
+	if setKniIP {
+		Natconfig.setKniIP = true
+	}
+	if bringUpKniInterfaces {
+		Natconfig.bringUpKniInterfaces = true
 	}
 
 	for i := range Natconfig.PortPairs {

@@ -238,12 +238,23 @@ func ParseAllKnownL4(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packe
 	}
 }
 
-func (port *ipPort) setLinkLocalIPv4KNIAddress(ipv4addr, mask uint32) {
+func bringInterfaceUp(dev netlink.Link, name string) bool {
+	err := netlink.LinkSetUp(dev)
+	if err != nil {
+		fmt.Println("Failed to bring interface up", name, ":", err)
+		return false
+	} else {
+		fmt.Println("Interface", name, "brought up successfully")
+		return true
+	}
+}
+
+func (port *ipPort) setLinkLocalIPv4KNIAddress(ipv4addr, mask uint32, bringup bool) bool {
 	if port.KNIName != "" {
 		myKNI, err := netlink.LinkByName(port.KNIName)
 		if err != nil {
 			fmt.Println("Failed to get KNI interface", port.KNIName, ":", err)
-			return
+			return false
 		}
 		a := packet.IPv4ToBytes(ipv4addr)
 		m := packet.IPv4ToBytes(mask)
@@ -256,19 +267,25 @@ func (port *ipPort) setLinkLocalIPv4KNIAddress(ipv4addr, mask uint32) {
 		fmt.Println("Setting address", addr)
 		err = netlink.AddrAdd(myKNI, addr)
 		if err != nil {
-			fmt.Println("Failed to set interface", port.KNIName, "address", addr, ":")
+			fmt.Println("Failed to set interface", port.KNIName, "address", addr, ":", err)
+			return false
 		} else {
 			fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
+			if bringup {
+				return bringInterfaceUp(myKNI, port.KNIName)
+			}
+			return true
 		}
 	}
+	return true
 }
 
-func (port *ipPort) setLinkLocalIPv6KNIAddress(ipv6addr, mask [common.IPv6AddrLen]uint8) {
+func (port *ipPort) setLinkLocalIPv6KNIAddress(ipv6addr, mask [common.IPv6AddrLen]uint8, bringup bool) bool {
 	if port.KNIName != "" {
 		myKNI, err := netlink.LinkByName(port.KNIName)
 		if err != nil {
 			fmt.Println("Failed to get KNI interface", port.KNIName, ":", err)
-			return
+			return false
 		}
 		addr := &netlink.Addr{
 			IPNet: &net.IPNet{
@@ -276,11 +293,18 @@ func (port *ipPort) setLinkLocalIPv6KNIAddress(ipv6addr, mask [common.IPv6AddrLe
 				Mask: mask[:],
 			},
 		}
+		fmt.Println("Setting address", addr)
 		err = netlink.AddrAdd(myKNI, addr)
 		if err != nil {
 			fmt.Println("Failed to set interface", port.KNIName, "address", addr, ":", err)
+			return false
 		} else {
 			fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
+			if bringup {
+				return bringInterfaceUp(myKNI, port.KNIName)
+			}
+			return true
 		}
 	}
+	return true
 }

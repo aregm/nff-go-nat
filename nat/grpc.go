@@ -70,16 +70,16 @@ func (s *server) ChangeInterfaceAddress(ctx context.Context, in *upd.InterfaceAd
 		port.Subnet.Addr = subnet4.Addr
 		port.Subnet.Mask = subnet4.Mask
 		port.Subnet.addressAcquired = true
-		port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask)
+		port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask, Natconfig.bringUpKniInterfaces)
 		str = port.Subnet.String()
 	}
 	if subnet6 != nil {
 		port.Subnet6.Addr = subnet6.Addr
 		port.Subnet6.Mask = subnet6.Mask
 		port.Subnet6.addressAcquired = true
-		port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask)
+		port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, Natconfig.bringUpKniInterfaces)
 		packet.CalculateIPv6MulticastAddrForDstIP(&port.Subnet6.multicastAddr, port.Subnet6.Addr)
-		port.setLinkLocalIPv6KNIAddress(port.Subnet6.llAddr, SingleIPMask)
+		port.setLinkLocalIPv6KNIAddress(port.Subnet6.llAddr, SingleIPMask, Natconfig.bringUpKniInterfaces)
 		str = port.Subnet6.String()
 	}
 

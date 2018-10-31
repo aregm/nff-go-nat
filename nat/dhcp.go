@@ -75,19 +75,33 @@ func sendDHCPRequests() {
 	for {
 		for i := range Natconfig.PortPairs {
 			pp := &Natconfig.PortPairs[i]
-			if !pp.PublicPort.Subnet.addressAcquired {
-				pp.PublicPort.sendDHCPDiscoverRequest()
+
+			port := &pp.PublicPort
+			if !port.Subnet.addressAcquired {
+				port.sendDHCPDiscoverRequest()
+			} else if Natconfig.setKniIP && !port.Subnet.kniAddressSet {
+				port.Subnet.kniAddressSet = port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask, Natconfig.bringUpKniInterfaces)
 			}
-			if !pp.PublicPort.Subnet6.addressAcquired {
-				pp.PublicPort.setLinkLocalIPv6KNIAddress(pp.PublicPort.Subnet6.llAddr, SingleIPMask)
-				pp.PublicPort.sendDHCPv6SolicitRequest()
+
+			if !port.Subnet6.addressAcquired {
+				port.setLinkLocalIPv6KNIAddress(port.Subnet6.llAddr, SingleIPMask, Natconfig.bringUpKniInterfaces)
+				port.sendDHCPv6SolicitRequest()
+			} else if Natconfig.setKniIP && !port.Subnet6.kniAddressSet {
+				port.Subnet6.kniAddressSet = port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, Natconfig.bringUpKniInterfaces)
 			}
-			if !pp.PrivatePort.Subnet.addressAcquired {
-				pp.PrivatePort.sendDHCPDiscoverRequest()
+
+			port = &pp.PrivatePort
+			if !port.Subnet.addressAcquired {
+				port.sendDHCPDiscoverRequest()
+			} else if Natconfig.setKniIP && !port.Subnet.kniAddressSet {
+				port.Subnet.kniAddressSet = port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask, Natconfig.bringUpKniInterfaces)
 			}
-			if !pp.PrivatePort.Subnet6.addressAcquired {
-				pp.PrivatePort.setLinkLocalIPv6KNIAddress(pp.PrivatePort.Subnet6.llAddr, SingleIPMask)
-				pp.PrivatePort.sendDHCPv6SolicitRequest()
+
+			if !port.Subnet6.addressAcquired {
+				port.setLinkLocalIPv6KNIAddress(port.Subnet6.llAddr, SingleIPMask, Natconfig.bringUpKniInterfaces)
+				port.sendDHCPv6SolicitRequest()
+			} else if Natconfig.setKniIP && !port.Subnet6.kniAddressSet {
+				port.Subnet6.kniAddressSet = port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, Natconfig.bringUpKniInterfaces)
 			}
 		}
 		time.Sleep(requestInterval)
@@ -232,5 +246,5 @@ func (port *ipPort) handleDHCPAck(pkt *packet.Packet, dhcp *layers.DHCPv4) {
 	println("Successfully acquired IP address:", port.Subnet.String(), "on port", port.Index)
 
 	// Set address on KNI interface if present
-	port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask)
+	port.setLinkLocalIPv4KNIAddress(port.Subnet.Addr, port.Subnet.Mask, Natconfig.bringUpKniInterfaces)
 }

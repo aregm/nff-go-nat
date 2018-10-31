@@ -266,7 +266,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -287,7 +287,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -315,7 +315,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -336,7 +336,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -357,7 +357,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -385,7 +385,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -406,7 +406,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -434,7 +434,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -455,7 +455,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -483,7 +483,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -504,7 +504,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -525,7 +525,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -553,7 +553,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -574,7 +574,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nff-go-nat", "-config", "config-kni-vlan.json"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni-vlan.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
