@@ -5,13 +5,15 @@
                 "index": 0,
                 "subnet": "192.168.114.1/24",
                 "subnet6": "fd84::1/64",
-                "kni-name": "priv0"
+                "kni-name": "priv0",
+                "vlan-tag": 114
             },
             "public-port": {
                 "index": 1,
-                "subnet": "192.168.16.1/24",
-                "subnet6": "fd16::1/64",
+                "subnet": "192.168.116.1/24",
+                "subnet6": "fd86::1/64",
                 "kni-name": "pub1",
+                "vlan-tag": 116,
                 "forward-ports": [
                     {
                         "port": 8080,
