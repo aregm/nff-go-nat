@@ -432,6 +432,10 @@ func ReadConfig(fileName string, setKniIP, bringUpKniInterfaces bool) error {
 				" has zero vlan tag. Transition between VLAN-enabled and VLAN-disabled networks is not supported yet.")
 		}
 
+		if (pp.PrivatePort.Vlan != 0 && pp.PrivatePort.KNIName != "") || (pp.PrivatePort.Vlan != 0 && pp.PrivatePort.KNIName != "") {
+			return fmt.Errorf("Using VLANs together with KNI is not supported yet.")
+		}
+
 		port := &pp.PrivatePort
 		for pi := 0; pi < 2; pi++ {
 			if !port.Subnet.addressAcquired {
