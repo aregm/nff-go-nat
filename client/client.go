@@ -90,6 +90,10 @@ func (acra *addresChangeRequestArray) Set(value string) error {
 	if err != nil {
 		return err
 	}
+	ip4 := ip.To4()
+	if ip4 != nil {
+		ip = ip4
+	}
 	ones, _ := ipnet.Mask.Size()
 
 	*acra = append(*acra, &upd.InterfaceAddressChangeRequest{
@@ -144,6 +148,10 @@ func (pfra *portForwardRequestArray) Set(value string) error {
 	ip := net.ParseIP(parts[4])
 	if ip == nil {
 		return fmt.Errorf("Bad IP address specified \"%s\"", parts[4])
+	}
+	ip4 := ip.To4()
+	if ip4 != nil {
+		ip = ip4
 	}
 
 	tport, err := strconv.ParseUint(parts[5], 10, 16)

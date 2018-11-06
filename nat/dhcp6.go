@@ -267,7 +267,7 @@ func (port *ipPort) handleDHCPv6Reply(pkt *packet.Packet, dhcpv6 *layers.DHCPv6)
 	println("Successfully acquired IP address:", port.Subnet6.String(), "on port", port.Index)
 
 	// Set address on KNI interface if present
-	port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, Natconfig.bringUpKniInterfaces)
+	port.setLinkIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, zeroIPv6Addr, zeroIPv6Addr, Natconfig.bringUpKniInterfaces)
 }
 
 type DHCPv6FQDNFlags byte

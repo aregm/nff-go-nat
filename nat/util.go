@@ -238,73 +238,102 @@ func ParseAllKnownL4(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packe
 	}
 }
 
-func bringInterfaceUp(dev netlink.Link, name string) bool {
+func bringInterfaceUp(dev netlink.Link, name string) error {
 	err := netlink.LinkSetUp(dev)
 	if err != nil {
-		fmt.Println("Failed to bring interface up", name, ":", err)
-		return false
+		return fmt.Errorf("Failed to bring interface up", name, ":", err)
 	} else {
 		fmt.Println("Interface", name, "brought up successfully")
-		return true
+		return nil
 	}
 }
 
-func (port *ipPort) setLinkLocalIPv4KNIAddress(ipv4addr, mask uint32, bringup bool) bool {
-	if port.KNIName != "" {
-		myKNI, err := netlink.LinkByName(port.KNIName)
-		if err != nil {
-			fmt.Println("Failed to get KNI interface", port.KNIName, ":", err)
-			return false
-		}
-		a := packet.IPv4ToBytes(ipv4addr)
-		m := packet.IPv4ToBytes(mask)
+func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint32, bringup bool) error {
+	if port.KNIName == "" {
+		return nil
+	}
+
+	myKNI, err := netlink.LinkByName(port.KNIName)
+	if err != nil {
+		return fmt.Errorf("Failed to get KNI interface", port.KNIName, ":", err)
+	}
+
+	if oldaddr != 0 {
+		a := packet.IPv4ToBytes(oldaddr)
+		m := packet.IPv4ToBytes(oldmask)
 		addr := &netlink.Addr{
 			IPNet: &net.IPNet{
 				IP:   net.IPv4(a[3], a[2], a[1], a[0]),
 				Mask: net.IPv4Mask(m[3], m[2], m[1], m[0]),
 			},
 		}
-		fmt.Println("Setting address", addr)
-		err = netlink.AddrAdd(myKNI, addr)
+		fmt.Println("Removing address", addr, "on interface", port.KNIName)
+		err = netlink.AddrDel(myKNI, addr)
 		if err != nil {
-			fmt.Println("Failed to set interface", port.KNIName, "address", addr, ":", err)
-			return false
-		} else {
-			fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
-			if bringup {
-				return bringInterfaceUp(myKNI, port.KNIName)
-			}
-			return true
+			return fmt.Errorf("Failed to remove address", addr, "from interface", port.KNIName, ":", err)
 		}
 	}
-	return true
+
+	a := packet.IPv4ToBytes(ipv4addr)
+	m := packet.IPv4ToBytes(mask)
+	addr := &netlink.Addr{
+		IPNet: &net.IPNet{
+			IP:   net.IPv4(a[3], a[2], a[1], a[0]),
+			Mask: net.IPv4Mask(m[3], m[2], m[1], m[0]),
+		},
+	}
+	fmt.Println("Setting address", addr, "on interface", port.KNIName)
+	err = netlink.AddrAdd(myKNI, addr)
+	if err != nil {
+		return fmt.Errorf("Failed to set interface", port.KNIName, "address", addr, ":", err)
+	}
+
+	fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
+	if bringup {
+		return bringInterfaceUp(myKNI, port.KNIName)
+	}
+	return nil
 }
 
-func (port *ipPort) setLinkLocalIPv6KNIAddress(ipv6addr, mask [common.IPv6AddrLen]uint8, bringup bool) bool {
-	if port.KNIName != "" {
-		myKNI, err := netlink.LinkByName(port.KNIName)
-		if err != nil {
-			fmt.Println("Failed to get KNI interface", port.KNIName, ":", err)
-			return false
-		}
+func (port *ipPort) setLinkIPv6KNIAddress(ipv6addr, mask, oldaddr, oldmask [common.IPv6AddrLen]uint8, bringup bool) error {
+	if port.KNIName == "" {
+		return nil
+	}
+
+	myKNI, err := netlink.LinkByName(port.KNIName)
+	if err != nil {
+		return fmt.Errorf("Failed to get KNI interface", port.KNIName, ":", err)
+	}
+
+	if oldaddr != zeroIPv6Addr {
 		addr := &netlink.Addr{
 			IPNet: &net.IPNet{
-				IP:   ipv6addr[:],
-				Mask: mask[:],
+				IP:   oldaddr[:],
+				Mask: oldmask[:],
 			},
 		}
-		fmt.Println("Setting address", addr)
-		err = netlink.AddrAdd(myKNI, addr)
+		fmt.Println("Removing address", addr, "on interface", port.KNIName)
+		err = netlink.AddrDel(myKNI, addr)
 		if err != nil {
-			fmt.Println("Failed to set interface", port.KNIName, "address", addr, ":", err)
-			return false
-		} else {
-			fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
-			if bringup {
-				return bringInterfaceUp(myKNI, port.KNIName)
-			}
-			return true
+			return fmt.Errorf("Failed to remove address", addr, "from interface", port.KNIName, ":", err)
 		}
 	}
-	return true
+
+	addr := &netlink.Addr{
+		IPNet: &net.IPNet{
+			IP:   ipv6addr[:],
+			Mask: mask[:],
+		},
+	}
+	fmt.Println("Setting address", addr)
+	err = netlink.AddrAdd(myKNI, addr)
+	if err != nil {
+		return fmt.Errorf("Failed to set interface", port.KNIName, "address", addr, ":", err)
+	}
+
+	fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
+	if bringup {
+		return bringInterfaceUp(myKNI, port.KNIName)
+	}
+	return nil
 }
