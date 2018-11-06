@@ -123,25 +123,23 @@ func (port *ipPort) composeAndSendDHCPv6Packet(packetType layers.DHCPv6MsgType, 
 }
 
 func (port *ipPort) checkDHCPv6ServerAnswerAndGetIANA(dhcpv6 *layers.DHCPv6) *layers.DHCPv6Option {
+	status := DHCPv6ServerStatusCode{}
 	statusOption := getDHCPv6Option(dhcpv6.Options, layers.DHCPv6OptStatusCode)
 	if statusOption == nil {
-		println("Warning! Received a DHCPv6 reply without status! Trying again with discover request.")
-		port.Subnet6.addressAcquired = false
-		port.Subnet6.ds = dhcpv6State{}
-		return nil
+		// Accordin to RFC3315 22.13 no status code option means success
+		status.StatusCode = layers.DHCPv6StatusCodeSuccess
+	} else {
+		err := status.DecodeFromBytes(statusOption.Data)
+		if err != nil {
+			println("Warning! Bad reply from server. Cannot decode status option: ", err)
+			port.Subnet6.addressAcquired = false
+			port.Subnet6.ds = dhcpv6State{}
+			return nil
+		}
 	}
 
-	status := DHCPv6ServerStatusCode{}
-	err := status.DecodeFromBytes(statusOption.Data)
-	if err != nil {
-		println("Warning! Bad reply from server. Cannot decode status option: ", err)
-		port.Subnet6.addressAcquired = false
-		port.Subnet6.ds = dhcpv6State{}
-		return nil
-	}
-
-	if layers.DHCPv6StatusCode(status.StatusCode) != layers.DHCPv6StatusCodeSuccess {
-		println("Warning! Server returned status", layers.DHCPv6StatusCode(status.StatusCode).String(), status.StatusMessage)
+	if status.StatusCode != layers.DHCPv6StatusCodeSuccess {
+		println("Warning! Server returned status", status.StatusCode.String(), status.StatusMessage)
 		port.Subnet6.addressAcquired = false
 		port.Subnet6.ds = dhcpv6State{}
 		return nil
@@ -269,7 +267,7 @@ func (port *ipPort) handleDHCPv6Reply(pkt *packet.Packet, dhcpv6 *layers.DHCPv6)
 	println("Successfully acquired IP address:", port.Subnet6.String(), "on port", port.Index)
 
 	// Set address on KNI interface if present
-	port.setLinkLocalIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask)
+	port.setLinkIPv6KNIAddress(port.Subnet6.Addr, port.Subnet6.Mask, zeroIPv6Addr, zeroIPv6Addr, Natconfig.bringUpKniInterfaces)
 }
 
 type DHCPv6FQDNFlags byte
@@ -325,7 +323,7 @@ func (fqdn *DHCPv6FQDN) DecodeFromBytes(data []byte) error {
 
 // Server status code option
 type DHCPv6ServerStatusCode struct {
-	StatusCode    uint16
+	StatusCode    layers.DHCPv6StatusCode
 	StatusMessage string
 }
 
@@ -343,7 +341,7 @@ func (sc *DHCPv6ServerStatusCode) DecodeFromBytes(data []byte) error {
 		return errors.New("Not enough bytes to decode: " + string(len(data)))
 	}
 
-	sc.StatusCode = binary.BigEndian.Uint16(data[:2])
+	sc.StatusCode = layers.DHCPv6StatusCode(binary.BigEndian.Uint16(data[:2]))
 	sc.StatusMessage = string(data[2:])
 	return nil
 }

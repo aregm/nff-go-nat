@@ -36,9 +36,11 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 		requestCode = common.ICMPv6TypeEchoRequest
 	}
 
+	ipv6 := protocol == common.ICMPv6Number
+
 	// Check IPv6 Neighbor Discovery first. If packet is handled, it
 	// returns DROP or KNI, otherwise continue to process it.
-	if packetSentToMulticast || (packetSentToUs && protocol == common.ICMPv6Number) {
+	if packetSentToMulticast || (packetSentToUs && ipv6) {
 		dir := port.handleIPv6NeighborDiscovery(pkt)
 		if dir != dirSEND {
 			return dir
@@ -55,7 +57,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	if packetSentToUs && port.KNIName != "" {
 		if key != nil {
 			_, ok := port.translationTable[protocol].Load(key)
-			if !ok || time.Since(port.getPortmap(protocol == common.ICMPv6Number, protocol)[icmp.Identifier].lastused) > connectionTimeout {
+			if !ok || time.Since(port.getPortmap(ipv6, protocol)[packet.SwapBytesUint16(icmp.Identifier)].lastused) > connectionTimeout {
 				return dirKNI
 			}
 		}

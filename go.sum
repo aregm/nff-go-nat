@@ -14,6 +14,8 @@ github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/google/gopacket v1.1.14/go.mod h1:UCLx9mCmAwsVbn6qQl1WIEt2SO7Nd2fD0th1TBAsqBw=
 github.com/google/gopacket v1.1.15 h1:M6W3hwQXo5rq1wyhRByGhqOw0m9p+HWtUJ3Bj4/fT6E=
 github.com/google/gopacket v1.1.15/go.mod h1:UCLx9mCmAwsVbn6qQl1WIEt2SO7Nd2fD0th1TBAsqBw=
+github.com/google/gopacket v1.1.16-0.20181023151400-a35e09f9f224 h1:78xLKlzgK/iEGI5iyrSMXEZu+kRRT+s08QqpSXonq7o=
+github.com/google/gopacket v1.1.16-0.20181023151400-a35e09f9f224/go.mod h1:UCLx9mCmAwsVbn6qQl1WIEt2SO7Nd2fD0th1TBAsqBw=
 github.com/gopherjs/gopherjs v0.0.0-20180825215210-0210a2f0f73c/go.mod h1:wJfORRmW1u3UXTncJ5qlYoELFm8eSnnEO6hX4iZ3EWY=
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHhCYQXV3UM06sGGrk=
@@ -22,6 +24,8 @@ github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191 h1:NS6qVx9y9FIEdve
 github.com/intel-go/nff-go v0.0.0-20181001202120-5db6c39a9191/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
 github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204 h1:qty4fLwai6XppC+fnDOk21OfCYWbnxYiBwnoN3eSE54=
 github.com/intel-go/nff-go v0.0.0-20181002212532-f4887690e204/go.mod h1:a8QAG6+aP/tFdsETySIAsI6dEuLT4/iI549Cxz6CubQ=
+github.com/intel-go/nff-go v0.0.0-20181025212503-86076d68cc4a h1:z1pdHMktxBobC29+8b4nhP5+QpImMHuoYND0cXrgpkQ=
+github.com/intel-go/nff-go v0.0.0-20181025212503-86076d68cc4a/go.mod h1:n+oCFN0hmbHg1l3ifQcowWg7sRcHaGpm+OWm6s8NKBk=
 github.com/intel-go/nff-go v0.6.1 h1:C4BX9X52MtzQbEaFhT0RFl/mbKNQq5byn5/byK0Q6Vs=
 github.com/intel-go/nff-go v0.6.1/go.mod h1:n+oCFN0hmbHg1l3ifQcowWg7sRcHaGpm+OWm6s8NKBk=
 github.com/jtolds/gls v4.2.1+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=

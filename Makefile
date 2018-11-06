@@ -7,20 +7,27 @@
 .PHONY: all
 all: nff-go-nat client/client
 
+.PHONY: debug
+debug: | .set-debug all
+
+.PHONY: .set-debug
+.set-debug:
+	$(eval GO_COMPILE_FLAGS := -gcflags=all='-N -l')
+
 client/client: .check-env Makefile client/client.go
-	cd client && go build
+	cd client && go build $(GO_COMPILE_FLAGS)
 
 nff-go-nat: .check-env Makefile nat.go $(wildcard nat/*.go)
-	go build
+	go build $(GO_COMPILE_FLAGS)
 
 .PHONY: clean
 clean:
-	-rm nat
+	-rm nff-go-nat
 	-rm client/client
 
 # --------- Docker images build rules
 
-IMAGENAME=nat
+IMAGENAME=nff-go-nat
 BASEIMAGE=nff-go-base
 # Add user name to generated images
 ifdef NFF_GO_IMAGE_PREFIX
@@ -71,23 +78,23 @@ cleanall: .check-deploy-env clean-images
 # --------- Test execution rules
 
 .PHONY: .check-test-env
-.check-test-env: .check-defined-NFF_GO $(NFF_GO)/test/framework/main/tf
+.check-test-env: .check-defined-NFF_GO .check-defined-NFF_GO_HOSTS $(NFF_GO)/test/framework/main/tf
 
 .PHONY: test-stability
 test-stability: .check-test-env test/stability-nat.json
-	$(NFF_GO)/test/framework/main/tf test/stability-nat.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-stabilityresults -config test/stability-nat.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-stability-vlan
 test-stability-vlan: .check-test-env test/stability-nat-vlan.json
-	$(NFF_GO)/test/framework/main/tf test/stability-nat-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-stabilityresults -config test/stability-nat-vlan.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-performance
 test-performance: .check-test-env test/perf-nat.json
-	$(NFF_GO)/test/framework/main/tf test/perf-nat.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-perfresults -config test/perf-nat.json -hosts $(NFF_GO_HOSTS)
 
 .PHONY: test-performance-vlan
 test-performance-vlan: .check-test-env test/perf-nat-vlan.json
-	$(NFF_GO)/test/framework/main/tf test/perf-nat-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-perfresults -config test/perf-nat-vlan.json -hosts $(NFF_GO_HOSTS)
 
 # --------- Utility rules
 

@@ -28,7 +28,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nat", "-config", "config-vlan.json"
+                        "./nff-go-nat", "-config", "config-vlan.json"
                     ]
                 }
             ]
@@ -49,7 +49,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nat", "-config", "config-vlan.json"
+                        "./nff-go-nat", "-config", "config-vlan.json"
                     ]
                 },
                 {
@@ -57,6 +57,27 @@
                     "app-type": "TestAppGo",
                     "exec-cmd": [
                         "sh", "-c", "sleep 10; ping -c 5 192.168.116.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNAT-VLAN",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.116.2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
                     ]
                 }
             ]
@@ -70,14 +91,161 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.2/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.2/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 },
                 {
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "./nat", "-config", "config-vlan.json"
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://192.168.116.1:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNAT_V6-VLANFromPrivate",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd84::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingNAT_V6-VLANFromPublic",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd86::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "PingThroughNAT_V6-VLAN",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -6 -c 5 fd86::2 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NAT_V6-VLANDownloadFile",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::2]/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NAT_V6_VLANDownloadFilePortForward",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "./nff-go-nat", "-config", "config-vlan.json"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; wget --no-proxy http://[fd86::1]:8080/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]

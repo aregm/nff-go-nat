@@ -99,6 +99,7 @@ type ipv4Subnet struct {
 	Addr            uint32
 	Mask            uint32
 	addressAcquired bool
+	kniAddressSet   bool
 	ds              dhcpState
 }
 
@@ -137,6 +138,7 @@ type ipv6Subnet struct {
 	llAddr          [common.IPv6AddrLen]uint8
 	llMulticastAddr [common.IPv6AddrLen]uint8
 	addressAcquired bool
+	kniAddressSet   bool
 	ds              dhcpv6State
 }
 
@@ -212,8 +214,10 @@ type portPair struct {
 
 // Config for NAT.
 type Config struct {
-	HostName  string     `json:"host-name"`
-	PortPairs []portPair `json:"port-pairs"`
+	HostName             string     `json:"host-name"`
+	PortPairs            []portPair `json:"port-pairs"`
+	setKniIP             bool
+	bringUpKniInterfaces bool
 }
 
 // Type used to pass handler index to translation functions.
@@ -387,7 +391,7 @@ func (out *macAddress) UnmarshalJSON(b []byte) error {
 }
 
 // ReadConfig function reads and parses config file
-func ReadConfig(fileName string) error {
+func ReadConfig(fileName string, setKniIP, bringUpKniInterfaces bool) error {
 	file, err := os.Open(fileName)
 	if err != nil {
 		return err
@@ -397,6 +401,13 @@ func ReadConfig(fileName string) error {
 	err = decoder.Decode(&Natconfig)
 	if err != nil {
 		return err
+	}
+
+	if setKniIP {
+		Natconfig.setKniIP = true
+	}
+	if bringUpKniInterfaces {
+		Natconfig.bringUpKniInterfaces = true
 	}
 
 	for i := range Natconfig.PortPairs {
@@ -421,6 +432,10 @@ func ReadConfig(fileName string) error {
 				" has zero vlan tag. Transition between VLAN-enabled and VLAN-disabled networks is not supported yet.")
 		}
 
+		if (pp.PrivatePort.Vlan != 0 && pp.PrivatePort.KNIName != "") || (pp.PrivatePort.Vlan != 0 && pp.PrivatePort.KNIName != "") {
+			return fmt.Errorf("Using VLANs together with KNI is not supported yet.")
+		}
+
 		port := &pp.PrivatePort
 		for pi := 0; pi < 2; pi++ {
 			if !port.Subnet.addressAcquired {
@@ -428,6 +443,10 @@ func ReadConfig(fileName string) error {
 					return fmt.Errorf("DHCP option for port %d requires that you set host-name configuration option", port.Index)
 				}
 				NeedDHCP = true
+			}
+
+			if port.KNIName != "" {
+				NeedKNI = true
 			}
 
 			for fpi := range port.ForwardPorts {
