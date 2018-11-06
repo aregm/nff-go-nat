@@ -585,6 +585,167 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "NATKNI_GRPC_EnableDumpDropped",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; NO_PROXY=fd14::1,192.168.14.1 ./client -a 192.168.14.1:60602 -d +d && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_EnableDumpTranslated",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; NO_PROXY=fd14::1,192.168.14.1 ./client -a [fd14::1]:60602 -d +t && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_EnableDumpKNI",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; NO_PROXY=fd14::1,192.168.14.1 ./client -a 192.168.14.1:60602 -d +k && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_ChangeIPv4Subnet",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 192.168.14.1 && NO_PROXY=fd14::1,192.168.14.1 ./client -a [fd14::1]:60602 -s 0,192.168.13.1/24 && ! ping -c 5 192.168.14.1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_ChangeIPv6Subnet",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ping -c 5 fd14::1 && NO_PROXY=fd14::1,192.168.14.1 ./client -a 192.168.14.1:60602 -s 0,fd13::1/24 && ! ping -c 5 fd14::1 && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_PortForwarding_V4",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ! wget --no-proxy http://192.168.16.1:8888/1m.bin -O /dev/null && NO_PROXY=fd16::1,192.168.16.1 ./client -a 192.168.16.1:60602 -p +,1,TCP,8888,192.168.14.2,80 && wget --no-proxy http://192.168.16.1:8888/1m.bin -O /dev/null && NO_PROXY=fd16::1,192.168.16.1 ./client -a 192.168.16.1:60602 -p -,1,TCP,8888,192.168.14.2,80 && ! wget --no-proxy http://192.168.16.1:8888/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "NATKNI_GRPC_PortForwarding_V6",
+            "test-time": 60000000000,
+            "test-type": "TestTypeScenario",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sleep", "60"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                    ]
+                },
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppGo",
+                    "exec-cmd": [
+                        "sh", "-c", "sleep 10; ! wget --no-proxy http://[fd16::1]:8888/1m.bin -O /dev/null && NO_PROXY=fd16::1,192.168.16.1 ./client -a [fd16::1]:60602 -p +,1,TCP6,8888,fd14::2,80 && wget --no-proxy http://[fd16::1]:8888/1m.bin -O /dev/null && NO_PROXY=fd16::1,192.168.16.1 ./client -a [fd16::1]:60602 -p -,1,TCP6,8888,fd14::2,80 && ! wget --no-proxy http://[fd16::1]:8888/1m.bin -O /dev/null && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
         }
     ]
 }
