@@ -1,0 +1,6 @@
+[submodule "test/wrk"]
+	path = test/wrk
+	url = https://github.com/wg/wrk.git
+[submodule "test/httpperfserv"]
+	path = test/httpperfserv
+	url = git@github.com:gshimansky/httpperfserv

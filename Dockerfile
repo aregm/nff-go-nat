@@ -23,6 +23,10 @@ WORKDIR /workdir
 COPY nff-go-nat .
 COPY client/client .
 
+# Test applications
+COPY test/httpperfserv/httpperfserv .
+COPY test/wrk/wrk .
+
 # Configs without VLANs
 COPY config.json .
 COPY config-vlan.json .
