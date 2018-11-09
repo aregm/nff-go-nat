@@ -3,4 +3,4 @@
 	url = https://github.com/wg/wrk.git
 [submodule "test/httpperfserv"]
 	path = test/httpperfserv
-	url = https://github.com/vsukhoml/httpperfserv
+	url = https://github.com/gshimansky/httpperfserv
