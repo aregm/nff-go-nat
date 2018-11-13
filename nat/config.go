@@ -40,7 +40,8 @@ const (
 )
 
 var (
-	zeroIPv6Addr = [common.IPv6AddrLen]uint8{}
+	zeroIPv6Addr             = [common.IPv6AddrLen]uint8{}
+	portReuseSetLastusedTime = time.Duration(portReuseTimeout - connectionTimeout)
 )
 
 type hostPort struct {
