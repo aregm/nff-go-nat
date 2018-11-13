@@ -106,6 +106,14 @@ test-performance: .check-test-env test/perf-nat.json
 test-performance-vlan: .check-test-env test/perf-nat-vlan.json
 	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-perfresults -config test/perf-nat-vlan.json -hosts $(NFF_GO_HOSTS)
 
+.PHONY: test-linux-performance
+test-linux-performance: .check-test-env test/perf-nat-linux.json
+	$(NFF_GO)/test/framework/main/tf -directory linux-nat-perfresults -config test/perf-nat-linux.json -hosts $(NFF_GO_HOSTS)
+
+.PHONY: test-linux-performance-vlan
+test-linux-performance-vlan: .check-test-env test/perf-nat-linux-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory linux-nat-vlan-perfresults -config test/perf-nat-linux-vlan.json -hosts $(NFF_GO_HOSTS)
+
 # --------- Utility rules
 
 .PHONY: .check-env
