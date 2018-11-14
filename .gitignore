@@ -2,3 +2,10 @@
 *~
 doc
 nff-go-nat
+
+nat-stabilityresults
+nat-vlan-stabilityresults
+nat-perfresults
+nat-vlan-perfresults
+linux-nat-perfresults
+linux-nat-vlan-perfresults
