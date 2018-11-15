@@ -5,7 +5,7 @@
 # --------- General build rules
 
 .PHONY: all
-all: nff-go-nat client/client
+all: nff-go-nat client/client httpperfserv wrk
 
 .PHONY: debug
 debug: | .set-debug all
@@ -20,10 +20,20 @@ client/client: .check-env Makefile client/client.go
 nff-go-nat: .check-env Makefile nat.go $(wildcard nat/*.go)
 	go build $(GO_COMPILE_FLAGS)
 
+.PHONY: httpperfserv
+httpperfserv:
+	cd test/httpperfserv && go build $(GO_COMPILE_FLAGS)
+
+.PHONY: wrk
+wrk:
+	$(MAKE) -C test/wrk
+
 .PHONY: clean
 clean:
 	-rm nff-go-nat
 	-rm client/client
+	-rm test/httpperfserv/httpperfserv
+	$(MAKE) -C test/wrk clean
 
 # --------- Docker images build rules
 
@@ -95,6 +105,14 @@ test-performance: .check-test-env test/perf-nat.json
 .PHONY: test-performance-vlan
 test-performance-vlan: .check-test-env test/perf-nat-vlan.json
 	$(NFF_GO)/test/framework/main/tf -directory nat-vlan-perfresults -config test/perf-nat-vlan.json -hosts $(NFF_GO_HOSTS)
+
+.PHONY: test-linux-performance
+test-linux-performance: .check-test-env test/perf-nat-linux.json
+	$(NFF_GO)/test/framework/main/tf -directory linux-nat-perfresults -config test/perf-nat-linux.json -hosts $(NFF_GO_HOSTS)
+
+.PHONY: test-linux-performance-vlan
+test-linux-performance-vlan: .check-test-env test/perf-nat-linux-vlan.json
+	$(NFF_GO)/test/framework/main/tf -directory linux-nat-vlan-perfresults -config test/perf-nat-linux-vlan.json -hosts $(NFF_GO_HOSTS)
 
 # --------- Utility rules
 

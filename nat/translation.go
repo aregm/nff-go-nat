@@ -49,7 +49,7 @@ func (pp *portPair) allocateNewEgressConnection(ipv6 bool, protocol uint8, privE
 		}
 	}
 
-	pp.PublicPort.getPortmap(ipv6, protocol)[port] = portMapEntry{
+	pp.getPublicPortPortmap(ipv6, protocol)[port] = portMapEntry{
 		lastused:             time.Now(),
 		finCount:             0,
 		terminationDirection: 0,
@@ -380,7 +380,7 @@ func (pp *portPair) checkTCPTermination(ipv6 bool, hdr *packet.TCPHdr, port int,
 		// First check for FIN
 		pp.mutex.Lock()
 
-		pme := &pp.PublicPort.portmap[common.TCPNumber][port]
+		pme := &pp.getPublicPortPortmap(ipv6, common.TCPNumber)[port]
 		if pme.finCount == 0 {
 			pme.finCount = 1
 			pme.terminationDirection = dir
@@ -400,12 +400,12 @@ func (pp *portPair) checkTCPTermination(ipv6 bool, hdr *packet.TCPHdr, port int,
 		// FIN
 		pp.mutex.Lock()
 
-		pme := &pp.PublicPort.portmap[common.TCPNumber][port]
+		pme := &pp.getPublicPortPortmap(ipv6, common.TCPNumber)[port]
 		if pme.finCount == 2 {
 			pp.deleteOldConnection(ipv6, common.TCPNumber, port)
 			// Set some time while port cannot be used before
 			// connection timeout is reached
-			pme.lastused = time.Now().Add(time.Duration(portReuseTimeout - connectionTimeout))
+			pme.lastused = time.Now().Add(portReuseSetLastusedTime)
 		}
 
 		pp.mutex.Unlock()

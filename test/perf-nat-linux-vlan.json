@@ -13,7 +13,7 @@
     },
     "tests": [
         {
-            "name": "LinuxNAT-VLAN-10k-1c",
+            "name": "LinuxNAT-VLAN-1K-1c",
             "test-time": 90000000000,
             "test-type": "TestTypeApacheBenchmark",
             "test-apps": [
@@ -21,13 +21,13 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 1 -n 10000 http://192.168.116.2/10k.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://192.168.116.2:8008/1024/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
         },
         {
-            "name": "LinuxNAT-VLAN-100k-1c",
+            "name": "LinuxNAT-VLAN-10K-1c",
             "test-time": 90000000000,
             "test-type": "TestTypeApacheBenchmark",
             "test-apps": [
@@ -35,7 +35,21 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 1 -n 1000 http://192.168.116.2/100k.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://192.168.116.2:8008/10240/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT-VLAN-100K-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://192.168.116.2:8008/102400/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
@@ -49,13 +63,13 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 1 -n 1000 http://192.168.116.2/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://192.168.116.2:8008/1048576/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
         },
         {
-            "name": "LinuxNAT-VLAN-10k-10c",
+            "name": "LinuxNAT-VLAN-1G-1c",
             "test-time": 90000000000,
             "test-type": "TestTypeApacheBenchmark",
             "test-apps": [
@@ -63,13 +77,27 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 10 -n 10000 http://192.168.116.2/10k.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://192.168.116.2:8008/1073741824/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
         },
         {
-            "name": "LinuxNAT-VLAN-100k-10c",
+            "name": "LinuxNAT-VLAN-1K-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeWrkBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppWrkBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://192.168.116.2:8008/1024/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT-VLAN-10K-30c",
             "test-time": 90000000000,
             "test-type": "TestTypeApacheBenchmark",
             "test-apps": [
@@ -77,13 +105,13 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 10 -n 1000 http://192.168.116.2/100k.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://192.168.116.2:8008/10240/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
         },
         {
-            "name": "LinuxNAT-VLAN-1M-10c",
+            "name": "LinuxNAT-VLAN-100K-30c",
             "test-time": 90000000000,
             "test-type": "TestTypeApacheBenchmark",
             "test-apps": [
@@ -91,7 +119,175 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppApacheBenchmark",
                     "exec-cmd": [
-                        "sh", "-c", "ab -c 10 -n 1000 http://192.168.116.2/1m.bin && echo TEST PASSED || echo TEST FAILED"
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://192.168.116.2:8008/102400/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT-VLAN-1M-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://192.168.116.2:8008/1048576/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT-VLAN-1G-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://192.168.116.2:8008/1073741824/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1K-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://[fd86::2]:8008/1024/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-10K-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://[fd86::2]:8008/10240/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-100K-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://[fd86::2]:8008/102400/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1M-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://[fd86::2]:8008/1048576/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1G-1c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 1 -c 1 --latency http://[fd86::2]:8008/1073741824/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1K-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeWrkBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppWrkBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://[fd86::2]:8008/1024/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-10K-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://[fd86::2]:8008/10240/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-100K-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://[fd86::2]:8008/102400/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1M-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://[fd86::2]:8008/1048576/test && echo TEST PASSED || echo TEST FAILED"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "LinuxNAT_V6-VLAN-1G-30c",
+            "test-time": 90000000000,
+            "test-type": "TestTypeApacheBenchmark",
+            "test-apps": [
+                {
+                    "image-name": "nff-go-nat",
+                    "app-type": "TestAppApacheBenchmark",
+                    "exec-cmd": [
+                        "sh", "-c", "./wrk -d 30s -t 30 -c 30 --latency http://[fd86::2]:8008/1073741824/test && echo TEST PASSED || echo TEST FAILED"
                     ]
                 }
             ]
