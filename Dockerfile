@@ -7,7 +7,7 @@ FROM ${USER_NAME}/nff-go-base
 
 LABEL RUN docker run -it --privileged -v /sys/bus/pci/drivers:/sys/bus/pci/drivers -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages -v /sys/devices/system/node:/sys/devices/system/node -v /dev:/dev --name NAME -e NAME=NAME -e IMAGE=IMAGE IMAGE
 
-RUN dnf -y install procps-ng iputils httpd wget; dnf clean all
+RUN apt-get install -y procps iproute2 iputils-ping apache2 wget; apt-get clean
 RUN dd if=/dev/zero of=/var/www/html/10k.bin bs=1 count=10240
 RUN dd if=/dev/zero of=/var/www/html/100k.bin bs=1 count=102400
 RUN dd if=/dev/zero of=/var/www/html/1m.bin bs=1 count=1048576
