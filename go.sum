@@ -102,6 +102,8 @@ github.com/intel-go/nff-go v0.7.1 h1:c4UdHCUBsXeXbLzeMXBfVbUEPxS48kcTJx74JYZAtqI
 github.com/intel-go/nff-go v0.7.1/go.mod h1:8PImGKzPwodWn6+9+UcNqIEf7xEwm8ZUh+P6KA7Plho=
 github.com/intel-go/nff-go v0.7.2 h1:fNl42mdeb/3E7EHqLGVlDTaUitUbTDp1CHMcaSmFJm8=
 github.com/intel-go/nff-go v0.7.2/go.mod h1:8PImGKzPwodWn6+9+UcNqIEf7xEwm8ZUh+P6KA7Plho=
+github.com/intel-go/nff-go v0.7.3 h1:F7w0h/TFB1CNidaddc2eQkoTfWExSJumk7KUiwof3tI=
+github.com/intel-go/nff-go v0.7.3/go.mod h1:8PImGKzPwodWn6+9+UcNqIEf7xEwm8ZUh+P6KA7Plho=
 github.com/jellevandenhooff/dkim v0.0.0-20150330215556-f50fe3d243e1/go.mod h1:E0B/fFc00Y+Rasa88328GlI/XbtyysCtTHZS8h7IrBU=
 github.com/jtolds/gls v4.2.1+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
@@ -277,6 +279,7 @@ golang.org/x/tools v0.0.0-20181204185109-3832e276fb48/go.mod h1:n7NCudcB/nEzxVGm
 golang.org/x/tools v0.0.0-20181212200058-49db546f375e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20181219222714-6e267b5cc78e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20190130015043-a06a922acc1b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+golang.org/x/tools v0.0.0-20190130190128-9bdeaddf5f7f/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 google.golang.org/api v0.0.0-20180910000450-7ca32eb868bf/go.mod h1:4mhQ8q/RsB7i+udVvVy5NUi08OU8ZlA0gRVgrF7VFY0=
 google.golang.org/api v0.0.0-20181030000543-1d582fd0359e/go.mod h1:4mhQ8q/RsB7i+udVvVy5NUi08OU8ZlA0gRVgrF7VFY0=
 google.golang.org/api v0.0.0-20181220000619-583d854617af/go.mod h1:4mhQ8q/RsB7i+udVvVy5NUi08OU8ZlA0gRVgrF7VFY0=
