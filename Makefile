@@ -26,7 +26,7 @@ httpperfserv:
 
 .PHONY: wrk
 wrk:
-	$(MAKE) -C test/wrk
+	$(MAKE) -s -C test/wrk
 
 .PHONY: clean
 clean:
