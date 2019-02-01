@@ -385,7 +385,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -406,7 +406,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -553,7 +553,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -574,7 +574,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -602,7 +602,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -623,7 +623,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -644,7 +644,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -665,7 +665,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -686,7 +686,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 }
             ]
@@ -707,7 +707,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
@@ -735,7 +735,7 @@
                     "image-name": "nff-go-nat",
                     "app-type": "TestAppGo",
                     "exec-cmd": [
-                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; /usr/sbin/httpd; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
+                        "sh", "-c", "sysctl -w net.ipv6.conf.all.disable_ipv6=0; APACHE_RUN_DIR=/var/www/html APACHE_RUN_USER=www-data APACHE_RUN_GROUP=www-data APACHE_LOG_DIR=/var/log APACHE_PID_FILE=/var/run/apache2.pid /usr/sbin/apache2; ./nff-go-nat -config config-kni.json -set-kni-IP -bring-up-kni"
                     ]
                 },
                 {
