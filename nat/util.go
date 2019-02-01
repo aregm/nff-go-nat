@@ -238,14 +238,34 @@ func ParseAllKnownL4(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packe
 	}
 }
 
+const sysFsIfFormat = "/sys/devices/virtual/net/%s/carrier"
+
 func bringInterfaceUp(dev netlink.Link, name string) error {
-	err := netlink.LinkSetUp(dev)
+	var err error
+	err = netlink.LinkSetUp(dev)
 	if err != nil {
-		return fmt.Errorf("Failed to bring interface up", name, ":", err)
-	} else {
-		fmt.Println("Interface", name, "brought up successfully")
-		return nil
+		return fmt.Errorf("Failed to bring interface up \"%s\": %+v", name, err)
 	}
+
+	fname := fmt.Sprintf(sysFsIfFormat, name)
+	fmt.Println("NAME=", name)
+	fmt.Println("FILE NAME=", fname)
+	var file *os.File
+	file, err = os.OpenFile(fname, os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("Failed to enable carrier for interface \"%s\" because file \"%s\" could not be open: %+v", name, fname, err)
+	}
+	_, err = file.Write([]byte("1"))
+	if err != nil {
+		return fmt.Errorf("Failed to write to carrier file \"%s\": %+v", fname, err)
+	}
+	err = file.Close()
+	if err != nil {
+		return fmt.Errorf("Failed to close carrier file \"%s\": %+v", fname, err)
+	}
+
+	fmt.Println("Interface", name, "brought up successfully")
+	return nil
 }
 
 func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint32, bringup bool) error {
@@ -255,7 +275,7 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 
 	myKNI, err := netlink.LinkByName(port.KNIName)
 	if err != nil {
-		return fmt.Errorf("Failed to get KNI interface", port.KNIName, ":", err)
+		return fmt.Errorf("Failed to get KNI interface %s: %+v", port.KNIName, err)
 	}
 
 	if oldaddr != 0 {
@@ -270,7 +290,14 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 		fmt.Println("Removing address", addr, "on interface", port.KNIName)
 		err = netlink.AddrDel(myKNI, addr)
 		if err != nil {
-			return fmt.Errorf("Failed to remove address", addr, "from interface", port.KNIName, ":", err)
+			return fmt.Errorf("Failed to remove address %+v from interface \"%s\": %+v", addr, port.KNIName, err)
+		}
+	}
+
+	if bringup {
+		err = bringInterfaceUp(myKNI, port.KNIName)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -285,13 +312,10 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 	fmt.Println("Setting address", addr, "on interface", port.KNIName)
 	err = netlink.AddrAdd(myKNI, addr)
 	if err != nil {
-		return fmt.Errorf("Failed to set interface", port.KNIName, "address", addr, ":", err)
+		return fmt.Errorf("Failed to set interface \"%s\" address %+v: %+v", port.KNIName, addr, err)
 	}
 
-	fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
-	if bringup {
-		return bringInterfaceUp(myKNI, port.KNIName)
-	}
+	fmt.Println("Successfully set address", addr, "on KNI interface", port.KNIName)
 	return nil
 }
 
@@ -303,6 +327,13 @@ func (port *ipPort) setLinkIPv6KNIAddress(ipv6addr, mask, oldaddr, oldmask [comm
 	myKNI, err := netlink.LinkByName(port.KNIName)
 	if err != nil {
 		return fmt.Errorf("Failed to get KNI interface", port.KNIName, ":", err)
+	}
+
+	if bringup {
+		err = bringInterfaceUp(myKNI, port.KNIName)
+		if err != nil {
+			return err
+		}
 	}
 
 	if oldaddr != zeroIPv6Addr {
@@ -328,12 +359,9 @@ func (port *ipPort) setLinkIPv6KNIAddress(ipv6addr, mask, oldaddr, oldmask [comm
 	fmt.Println("Setting address", addr)
 	err = netlink.AddrAdd(myKNI, addr)
 	if err != nil {
-		return fmt.Errorf("Failed to set interface", port.KNIName, "address", addr, ":", err)
+		return fmt.Errorf("Failed to set interface \"%s\" address %+v: %+v", port.KNIName, addr, err)
 	}
 
-	fmt.Println("Set address", addr, "on KNI interface", port.KNIName)
-	if bringup {
-		return bringInterfaceUp(myKNI, port.KNIName)
-	}
+	fmt.Println("Successfully set address", addr, "on KNI interface", port.KNIName)
 	return nil
 }
