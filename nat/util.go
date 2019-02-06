@@ -248,8 +248,6 @@ func bringInterfaceUp(dev netlink.Link, name string) error {
 	}
 
 	fname := fmt.Sprintf(sysFsIfFormat, name)
-	fmt.Println("NAME=", name)
-	fmt.Println("FILE NAME=", fname)
 	var file *os.File
 	file, err = os.OpenFile(fname, os.O_WRONLY, 0644)
 	if err != nil {
