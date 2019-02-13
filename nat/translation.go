@@ -176,7 +176,7 @@ func PublicToPrivateTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 
 		// Do packet translation
 		pkt.Ether.DAddr = mac
-		pkt.Ether.SAddr = port.SrcMACAddress
+		pkt.Ether.SAddr = port.opposite.SrcMACAddress
 		if pktVLAN != nil {
 			pktVLAN.SetVLANTagIdentifier(port.opposite.Vlan)
 		}
@@ -323,7 +323,7 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 
 		// Do packet translation
 		pkt.Ether.DAddr = mac
-		pkt.Ether.SAddr = port.SrcMACAddress
+		pkt.Ether.SAddr = port.opposite.SrcMACAddress
 		if pktVLAN != nil {
 			pktVLAN.SetVLANTagIdentifier(port.opposite.Vlan)
 		}
