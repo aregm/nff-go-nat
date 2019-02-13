@@ -18,14 +18,14 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 			port.arpTable.Store(ipv4, arp.SHA)
 		}
 		if port.KNIName != "" {
-			return dirKNI
+			return DirKNI
 		}
-		return dirDROP
+		return DirDROP
 	}
 
 	// If there is a KNI interface, direct all ARP traffic to it
 	if port.KNIName != "" {
-		return dirKNI
+		return DirKNI
 	}
 
 	// Check that someone is asking about MAC of my IP address and HW
@@ -34,12 +34,12 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 		println("Warning! Got an ARP packet with target IPv4 address", StringIPv4Array(arp.TPA),
 			"different from IPv4 address on interface. Should be", StringIPv4Int(port.Subnet.Addr),
 			". ARP request ignored.")
-		return dirDROP
+		return DirDROP
 	}
 	if arp.THA != [common.EtherAddrLen]byte{} {
 		println("Warning! Got an ARP packet with non-zero MAC address", StringMAC(arp.THA),
 			". ARP request ignored.")
-		return dirDROP
+		return DirDROP
 	}
 
 	// Prepare an answer to this request
@@ -54,10 +54,10 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 		answerPacket.AddVLANTag(packet.SwapBytesUint16(vlan.TCI))
 	}
 
-	port.dumpPacket(answerPacket, dirSEND)
+	port.dumpPacket(answerPacket, DirSEND)
 	answerPacket.SendPacket(port.Index)
 
-	return dirDROP
+	return DirDROP
 }
 
 func (port *ipPort) getMACForIPv4(ip uint32) (macAddress, bool) {
@@ -81,6 +81,6 @@ func (port *ipPort) sendARPRequest(ip uint32) {
 		requestPacket.AddVLANTag(port.Vlan)
 	}
 
-	port.dumpPacket(requestPacket, dirSEND)
+	port.dumpPacket(requestPacket, DirSEND)
 	requestPacket.SendPacket(port.Index)
 }

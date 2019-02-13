@@ -31,9 +31,9 @@ const (
 	iPUBLIC  interfaceType = 0
 	iPRIVATE interfaceType = 1
 
-	dirDROP = uint(upd.TraceType_DUMP_DROP)
-	dirSEND = uint(upd.TraceType_DUMP_TRANSLATE)
-	dirKNI  = uint(upd.TraceType_DUMP_KNI)
+	DirDROP = uint(upd.TraceType_DUMP_DROP)
+	DirSEND = uint(upd.TraceType_DUMP_TRANSLATE)
+	DirKNI  = uint(upd.TraceType_DUMP_KNI)
 
 	connectionTimeout time.Duration = 1 * time.Minute
 	portReuseTimeout  time.Duration = 1 * time.Second
@@ -199,8 +199,8 @@ type ipPort struct {
 	// ARP lookup table
 	arpTable sync.Map
 	// Debug dump stuff
-	fdump    [dirKNI + 1]*os.File
-	dumpsync [dirKNI + 1]sync.Mutex
+	fdump    [DirKNI + 1]*os.File
+	dumpsync [DirKNI + 1]sync.Mutex
 }
 
 // Config for one port pair.
@@ -239,7 +239,7 @@ var (
 	NeedDHCP       bool
 
 	// Debug variables
-	DumpEnabled [dirKNI + 1]bool
+	DumpEnabled [DirKNI + 1]bool
 )
 
 func (pi pairIndex) Copy() interface{} {
@@ -645,13 +645,13 @@ func InitFlows() {
 		}
 		pubTranslationOut, err := flow.SetSplitter(publicToPrivate, PublicToPrivateTranslation, outsPub, context)
 		flow.CheckFatal(err)
-		flow.CheckFatal(flow.SetStopper(pubTranslationOut[dirDROP]))
+		flow.CheckFatal(flow.SetStopper(pubTranslationOut[DirDROP]))
 
 		// Initialize public KNI interface if requested
 		if pp.PublicPort.KNIName != "" {
 			pubKNI, err = flow.CreateKniDevice(pp.PublicPort.Index, pp.PublicPort.KNIName)
 			flow.CheckFatal(err)
-			flow.CheckFatal(flow.SetSenderKNI(pubTranslationOut[dirKNI], pubKNI))
+			flow.CheckFatal(flow.SetSenderKNI(pubTranslationOut[DirKNI], pubKNI))
 			fromPubKNI = flow.SetReceiverKNI(pubKNI)
 		}
 
@@ -663,32 +663,32 @@ func InitFlows() {
 		}
 		privTranslationOut, err := flow.SetSplitter(privateToPublic, PrivateToPublicTranslation, outsPriv, context)
 		flow.CheckFatal(err)
-		flow.CheckFatal(flow.SetStopper(privTranslationOut[dirDROP]))
+		flow.CheckFatal(flow.SetStopper(privTranslationOut[DirDROP]))
 
 		// Initialize private KNI interface if requested
 		if pp.PrivatePort.KNIName != "" {
 			privKNI, err = flow.CreateKniDevice(pp.PrivatePort.Index, pp.PrivatePort.KNIName)
 			flow.CheckFatal(err)
-			flow.CheckFatal(flow.SetSenderKNI(privTranslationOut[dirKNI], privKNI))
+			flow.CheckFatal(flow.SetSenderKNI(privTranslationOut[DirKNI], privKNI))
 			fromPrivKNI = flow.SetReceiverKNI(privKNI)
 		}
 
 		// Merge traffic coming from public KNI with translated
 		// traffic from private side
 		if fromPubKNI != nil {
-			toPub, err = flow.SetMerger(fromPubKNI, privTranslationOut[dirSEND])
+			toPub, err = flow.SetMerger(fromPubKNI, privTranslationOut[DirSEND])
 			flow.CheckFatal(err)
 		} else {
-			toPub = privTranslationOut[dirSEND]
+			toPub = privTranslationOut[DirSEND]
 		}
 
 		// Merge traffic coming from private KNI with translated
 		// traffic from public side
 		if fromPrivKNI != nil {
-			toPriv, err = flow.SetMerger(fromPrivKNI, pubTranslationOut[dirSEND])
+			toPriv, err = flow.SetMerger(fromPrivKNI, pubTranslationOut[DirSEND])
 			flow.CheckFatal(err)
 		} else {
-			toPriv = pubTranslationOut[dirSEND]
+			toPriv = pubTranslationOut[DirSEND]
 		}
 
 		// Set senders to output packets

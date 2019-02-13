@@ -42,7 +42,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	// returns DROP or KNI, otherwise continue to process it.
 	if packetSentToMulticast || (packetSentToUs && ipv6) {
 		dir := port.handleIPv6NeighborDiscovery(pkt)
-		if dir != dirSEND {
+		if dir != DirSEND {
 			return dir
 		}
 	}
@@ -58,7 +58,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 		if key != nil {
 			_, ok := port.translationTable[protocol].Load(key)
 			if !ok || time.Since(port.getPortmap(ipv6, protocol)[packet.SwapBytesUint16(icmp.Identifier)].lastused) > connectionTimeout {
-				return dirKNI
+				return DirKNI
 			}
 		}
 	}
@@ -68,7 +68,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	// normal way. Maybe these are packets which should be passed
 	// through translation.
 	if !packetSentToUs || icmp.Type != requestCode || icmp.Code != 0 {
-		return dirSEND
+		return DirSEND
 	}
 
 	// Return a packet back to sender
@@ -91,7 +91,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 		setIPv6ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
 	}
 
-	port.dumpPacket(answerPacket, dirSEND)
+	port.dumpPacket(answerPacket, DirSEND)
 	answerPacket.SendPacket(port.Index)
-	return dirDROP
+	return DirDROP
 }

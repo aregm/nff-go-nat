@@ -14,12 +14,12 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 	if icmp.Type == common.ICMPv6NeighborSolicitation {
 		// If there is KNI interface, forward all of this here
 		if port.KNIName != "" {
-			return dirKNI
+			return DirKNI
 		}
 		pkt.ParseL7(common.ICMPv6Number)
 		msg := pkt.GetICMPv6NeighborSolicitationMessage()
 		if msg.TargetAddr != port.Subnet6.Addr && msg.TargetAddr != port.Subnet6.llAddr {
-			return dirDROP
+			return DirDROP
 		}
 		option := pkt.GetICMPv6NDSourceLinkLayerAddressOption(packet.ICMPv6NeighborSolicitationMessageSize)
 		if option != nil && option.Type == packet.ICMPv6NDSourceLinkLayerAddress {
@@ -36,7 +36,7 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 			}
 
 			setIPv6ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
-			port.dumpPacket(answerPacket, dirSEND)
+			port.dumpPacket(answerPacket, DirSEND)
 			answerPacket.SendPacket(port.Index)
 		}
 	} else if icmp.Type == common.ICMPv6NeighborAdvertisement {
@@ -48,13 +48,13 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 		}
 
 		if port.KNIName != "" {
-			return dirKNI
+			return DirKNI
 		}
 	} else {
-		return dirSEND
+		return DirSEND
 	}
 
-	return dirDROP
+	return DirDROP
 }
 
 func (port *ipPort) getMACForIPv6(ip [common.IPv6AddrLen]uint8) (macAddress, bool) {
@@ -80,6 +80,6 @@ func (port *ipPort) sendNDNeighborSolicitationRequest(ip [common.IPv6AddrLen]uin
 	}
 
 	setIPv6ICMPChecksum(requestPacket, !NoCalculateChecksum, !NoHWTXChecksum)
-	port.dumpPacket(requestPacket, dirSEND)
+	port.dumpPacket(requestPacket, DirSEND)
 	requestPacket.SendPacket(port.Index)
 }

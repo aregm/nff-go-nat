@@ -177,7 +177,7 @@ func (port *ipPort) composeAndSendDHCPPacket(packetType layers.DHCPMsgType, opti
 	}
 
 	setIPv4UDPChecksum(pkt, !NoCalculateChecksum, !NoHWTXChecksum)
-	port.dumpPacket(pkt, dirSEND)
+	port.dumpPacket(pkt, DirSEND)
 	pkt.SendPacket(port.Index)
 
 	port.Subnet.ds.lastDHCPPacketTypeSent = packetType

@@ -58,7 +58,7 @@ func swapAddrIPv6(pkt *packet.Packet) {
 }
 
 func (port *ipPort) startTrace(dir uint) *os.File {
-	dumpNameLookup := [dirKNI + 1]string{
+	dumpNameLookup := [DirKNI + 1]string{
 		"drop",
 		"dump",
 		"kni",

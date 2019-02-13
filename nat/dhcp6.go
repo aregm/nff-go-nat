@@ -116,7 +116,7 @@ func (port *ipPort) composeAndSendDHCPv6Packet(packetType layers.DHCPv6MsgType, 
 	}
 
 	setIPv6UDPChecksum(pkt, !NoCalculateChecksum, !NoHWTXChecksum)
-	port.dumpPacket(pkt, dirSEND)
+	port.dumpPacket(pkt, DirSEND)
 	pkt.SendPacket(port.Index)
 
 	port.Subnet6.ds.lastDHCPv6PacketTypeSent = packetType
