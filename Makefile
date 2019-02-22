@@ -14,10 +14,13 @@ debug: | .set-debug all
 .set-debug:
 	$(eval GO_COMPILE_FLAGS := -gcflags=all='-N -l')
 
-client/client: .check-env Makefile client/client.go
+.check-downloads:
+	go mod download
+
+client/client: .check-env .check-downloads Makefile client/client.go
 	cd client && go build $(GO_COMPILE_FLAGS)
 
-nff-go-nat: .check-env Makefile nat.go $(wildcard nat/*.go)
+nff-go-nat: .check-env .check-downloads Makefile nat.go $(wildcard nat/*.go)
 	go build $(GO_COMPILE_FLAGS)
 
 .PHONY: httpperfserv
