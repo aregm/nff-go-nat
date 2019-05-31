@@ -58,12 +58,16 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 }
 
 func (port *ipPort) getMACForIPv6(ip [common.IPv6AddrLen]uint8) (macAddress, bool) {
-	v, found := port.arpTable.Load(ip)
-	if found {
-		return macAddress(v.([common.EtherAddrLen]byte)), true
+	if port.staticArpMode {
+		return port.DstMACAddress, true
+	} else {
+		v, found := port.arpTable.Load(ip)
+		if found {
+			return macAddress(v.([common.EtherAddrLen]byte)), true
+		}
+		port.sendNDNeighborSolicitationRequest(ip)
+		return macAddress{}, false
 	}
-	port.sendNDNeighborSolicitationRequest(ip)
-	return macAddress{}, false
 }
 
 func (port *ipPort) sendNDNeighborSolicitationRequest(ip [common.IPv6AddrLen]uint8) {

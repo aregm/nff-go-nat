@@ -187,6 +187,8 @@ type ipPort struct {
 	Vlan          uint16          `json:"vlan-tag"`
 	KNIName       string          `json:"kni-name"`
 	ForwardPorts  []forwardedPort `json:"forward-ports"`
+	DstMACAddress macAddress      `json:"dst-mac"`
+	staticArpMode bool
 	SrcMACAddress macAddress
 	Type          interfaceType
 	// Pointer to an opposite port in a pair
@@ -456,6 +458,11 @@ func ReadConfig(fileName string, setKniIP, bringUpKniInterfaces bool) error {
 				if err != nil {
 					return err
 				}
+			}
+			if port.DstMACAddress != [common.EtherAddrLen]uint8{} {
+				port.staticArpMode = true
+				fmt.Printf("Activating static ARP mode for port %d, using %s MAC address\n",
+					port.Index, packet.MACToString(port.DstMACAddress))
 			}
 			port = &pp.PublicPort
 		}

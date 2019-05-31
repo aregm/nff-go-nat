@@ -61,12 +61,16 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 }
 
 func (port *ipPort) getMACForIPv4(ip uint32) (macAddress, bool) {
-	v, found := port.arpTable.Load(ip)
-	if found {
-		return macAddress(v.([common.EtherAddrLen]byte)), true
+	if port.staticArpMode {
+		return port.DstMACAddress, true
+	} else {
+		v, found := port.arpTable.Load(ip)
+		if found {
+			return macAddress(v.([common.EtherAddrLen]byte)), true
+		}
+		port.sendARPRequest(ip)
+		return macAddress{}, false
 	}
-	port.sendARPRequest(ip)
-	return macAddress{}, false
 }
 
 func (port *ipPort) sendARPRequest(ip uint32) {
