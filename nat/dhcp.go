@@ -15,6 +15,7 @@ import (
 
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 type dhcpState struct {
@@ -26,12 +27,12 @@ const (
 	requestInterval = 10 * time.Second
 	DHCPServerPort  = 67
 	DHCPClientPort  = 68
-	BroadcastIPv4   = uint32(0xffffffff)
+	BroadcastIPv4   = types.IPv4Address(0xffffffff)
 )
 
 var (
 	rnd          = rand.New(rand.NewSource(time.Now().UnixNano()))
-	BroadcastMAC = [common.EtherAddrLen]byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
+	BroadcastMAC = types.MACAddress{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
 	dhcpOptions  = []layers.DHCPOption{
 		layers.NewDHCPOption(layers.DHCPOptParamsRequest,
 			[]byte{
@@ -127,7 +128,7 @@ func getDHCPOption(dhcp *layers.DHCPv4, optionType layers.DHCPOpt) *layers.DHCPO
 }
 
 func (port *ipPort) composeAndSendDHCPPacket(packetType layers.DHCPMsgType, options []layers.DHCPOption) {
-	hwa := make([]byte, common.EtherAddrLen)
+	hwa := make([]byte, types.EtherAddrLen)
 	copy(hwa, port.SrcMACAddress[:])
 
 	buf := gopacket.NewSerializeBuffer()
@@ -162,7 +163,7 @@ func (port *ipPort) composeAndSendDHCPPacket(packetType layers.DHCPMsgType, opti
 	pkt.Ether.DAddr = BroadcastMAC
 
 	// Fill up L3
-	pkt.GetIPv4NoCheck().SrcAddr = uint32(0)
+	pkt.GetIPv4NoCheck().SrcAddr = types.IPv4Address(0)
 	pkt.GetIPv4NoCheck().DstAddr = BroadcastIPv4
 
 	// Fill up L4
@@ -177,7 +178,7 @@ func (port *ipPort) composeAndSendDHCPPacket(packetType layers.DHCPMsgType, opti
 	}
 
 	setIPv4UDPChecksum(pkt, !NoCalculateChecksum, !NoHWTXChecksum)
-	port.dumpPacket(pkt, dirSEND)
+	port.dumpPacket(pkt, DirSEND)
 	pkt.SendPacket(port.Index)
 
 	port.Subnet.ds.lastDHCPPacketTypeSent = packetType

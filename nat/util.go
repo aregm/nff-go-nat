@@ -12,8 +12,8 @@ import (
 
 	"github.com/vishvananda/netlink"
 
-	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 
 	upd "github.com/intel-go/nff-go-nat/updatecfg"
 )
@@ -35,14 +35,6 @@ func StringIPv4Int(addr uint32) string {
 		addr&0xff)
 }
 
-func StringIPv4Array(addr [common.IPv4AddrLen]uint8) string {
-	return fmt.Sprintf("%d.%d.%d.%d", addr[0], addr[1], addr[2], addr[3])
-}
-
-func StringMAC(mac [common.EtherAddrLen]uint8) string {
-	return fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5])
-}
-
 func swapAddrIPv4(pkt *packet.Packet) {
 	ipv4 := pkt.GetIPv4NoCheck()
 
@@ -58,13 +50,13 @@ func swapAddrIPv6(pkt *packet.Packet) {
 }
 
 func (port *ipPort) startTrace(dir uint) *os.File {
-	dumpNameLookup := [dirKNI + 1]string{
+	dumpNameLookup := [DirKNI + 1]string{
 		"drop",
 		"dump",
 		"kni",
 	}
 
-	fname := fmt.Sprintf("%s-%d-%s.pcap", dumpNameLookup[dir], port.Index, packet.MACToString(port.SrcMACAddress))
+	fname := fmt.Sprintf("%s-%d-%s.pcap", dumpNameLookup[dir], port.Index, port.SrcMACAddress.String())
 
 	file, err := os.Create(fname)
 	if err != nil {
@@ -120,27 +112,27 @@ func convertSubnet(s *upd.Subnet) (*ipv4Subnet, *ipv6Subnet, error) {
 
 	return &ipv4Subnet{
 		Addr: addr,
-		Mask: uint32(0xffffffff) << (32 - s.GetMaskBitsNumber()),
+		Mask: types.IPv4Address(0xffffffff) << (32 - s.GetMaskBitsNumber()),
 	}, nil, nil
 }
 
 func convertForwardedPort(p *upd.ForwardedPort) (*forwardedPort, error) {
 	bytes := p.GetTargetAddress().GetAddress()
 	addr, err := convertIPv4(bytes)
-	var addr6 [common.IPv6AddrLen]uint8
+	var addr6 types.IPv6Address
 	var ipv6 bool
 	if err != nil {
-		if len(bytes) == common.IPv6AddrLen {
+		if len(bytes) == types.IPv6AddrLen {
 			copy(addr6[:], bytes)
 			ipv6 = true
 		} else {
 			return nil, err
 		}
 	}
-	if uint8(p.GetProtocol()) != common.TCPNumber &&
-		uint8(p.GetProtocol()) != common.UDPNumber &&
-		p.GetProtocol() != (common.TCPNumber|upd.Protocol_IPv6_Flag) &&
-		p.GetProtocol() != (common.UDPNumber|upd.Protocol_IPv6_Flag) {
+	if uint8(p.GetProtocol()) != types.TCPNumber &&
+		uint8(p.GetProtocol()) != types.UDPNumber &&
+		p.GetProtocol() != (types.TCPNumber|upd.Protocol_IPv6_Flag) &&
+		p.GetProtocol() != (types.UDPNumber|upd.Protocol_IPv6_Flag) {
 		return nil, fmt.Errorf("Bad protocol identifier %d", p.GetProtocol())
 	}
 
@@ -221,16 +213,16 @@ func ParseAllKnownL4(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packe
 	}
 
 	switch protocol {
-	case common.TCPNumber:
+	case types.TCPNumber:
 		pktTCP := (*packet.TCPHdr)(pkt.L4)
 		return protocol, pktTCP, nil, nil, packet.SwapBytesUint16(pktTCP.SrcPort), packet.SwapBytesUint16(pktTCP.DstPort)
-	case common.UDPNumber:
+	case types.UDPNumber:
 		pktUDP := (*packet.UDPHdr)(pkt.L4)
 		return protocol, nil, pktUDP, nil, packet.SwapBytesUint16(pktUDP.SrcPort), packet.SwapBytesUint16(pktUDP.DstPort)
-	case common.ICMPNumber:
+	case types.ICMPNumber:
 		pktICMP := (*packet.ICMPHdr)(pkt.L4)
 		return protocol, nil, nil, pktICMP, packet.SwapBytesUint16(pktICMP.Identifier), packet.SwapBytesUint16(pktICMP.Identifier)
-	case common.ICMPv6Number:
+	case types.ICMPv6Number:
 		pktICMP := (*packet.ICMPHdr)(pkt.L4)
 		return protocol, nil, nil, pktICMP, packet.SwapBytesUint16(pktICMP.Identifier), packet.SwapBytesUint16(pktICMP.Identifier)
 	default:
@@ -248,8 +240,6 @@ func bringInterfaceUp(dev netlink.Link, name string) error {
 	}
 
 	fname := fmt.Sprintf(sysFsIfFormat, name)
-	fmt.Println("NAME=", name)
-	fmt.Println("FILE NAME=", fname)
 	var file *os.File
 	file, err = os.OpenFile(fname, os.O_WRONLY, 0644)
 	if err != nil {
@@ -268,7 +258,7 @@ func bringInterfaceUp(dev netlink.Link, name string) error {
 	return nil
 }
 
-func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint32, bringup bool) error {
+func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask types.IPv4Address, bringup bool) error {
 	if port.KNIName == "" {
 		return nil
 	}
@@ -279,8 +269,8 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 	}
 
 	if oldaddr != 0 {
-		a := packet.IPv4ToBytes(oldaddr)
-		m := packet.IPv4ToBytes(oldmask)
+		a := types.IPv4ToBytes(oldaddr)
+		m := types.IPv4ToBytes(oldmask)
 		addr := &netlink.Addr{
 			IPNet: &net.IPNet{
 				IP:   net.IPv4(a[3], a[2], a[1], a[0]),
@@ -301,8 +291,8 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 		}
 	}
 
-	a := packet.IPv4ToBytes(ipv4addr)
-	m := packet.IPv4ToBytes(mask)
+	a := types.IPv4ToBytes(ipv4addr)
+	m := types.IPv4ToBytes(mask)
 	addr := &netlink.Addr{
 		IPNet: &net.IPNet{
 			IP:   net.IPv4(a[3], a[2], a[1], a[0]),
@@ -319,7 +309,7 @@ func (port *ipPort) setLinkIPv4KNIAddress(ipv4addr, mask, oldaddr, oldmask uint3
 	return nil
 }
 
-func (port *ipPort) setLinkIPv6KNIAddress(ipv6addr, mask, oldaddr, oldmask [common.IPv6AddrLen]uint8, bringup bool) error {
+func (port *ipPort) setLinkIPv6KNIAddress(ipv6addr, mask, oldaddr, oldmask types.IPv6Address, bringup bool) error {
 	if port.KNIName == "" {
 		return nil
 	}

@@ -7,17 +7,19 @@ require (
 	git.apache.org/thrift.git v0.12.0 // indirect
 	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/coreos/go-systemd v0.0.0-20190204112023-081494f7ee4f // indirect
+	github.com/docker/go-units v0.4.0 // indirect
 	github.com/go-logfmt/logfmt v0.4.0 // indirect
 	github.com/gogo/protobuf v1.2.0 // indirect
 	github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	github.com/golang/protobuf v1.2.0
-	github.com/google/gopacket v1.1.16
+	github.com/golang/protobuf v1.3.1
+	github.com/google/gopacket v1.1.17
 	github.com/google/pprof v0.0.0-20190109223431-e84dfd68c163 // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0 // indirect
-	github.com/intel-go/nff-go v0.7.4
+	github.com/intel-go/nff-go v0.8.1
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/nsf/gocode v0.0.0-20181120081338-6cac7c69a41e // indirect
 	github.com/openzipkin/zipkin-go v0.1.5 // indirect
@@ -40,16 +42,21 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/shurcooL/webdavfs v0.0.0-20181215192745-5988b2d638f6 // indirect
 	github.com/sirupsen/logrus v1.3.0 // indirect
+	github.com/smartystreets/assertions v1.0.0 // indirect
+	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/vishvananda/netlink v1.0.0
 	go.opencensus.io v0.19.0 // indirect
 	go4.org v0.0.0-20181109185143-00e24f1b2599 // indirect
 	golang.org/x/build v0.0.0-20190205194203-d0914bad8ebc // indirect
-	golang.org/x/crypto v0.0.0-20190131182504-b8fe1690c613 // indirect
+	golang.org/x/crypto v0.0.0-20190618222545-ea8f1a30c443 // indirect
 	golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2 // indirect
-	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3
+	golang.org/x/net v0.0.0-20190619014844-b5b0513f8c1b
 	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1 // indirect
 	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
+	golang.org/x/sys v0.0.0-20190620070143-6f217b454f45 // indirect
+	golang.org/x/text v0.3.2 // indirect
+	golang.org/x/tools v0.0.0-20190619215442-4adf7a708c2d // indirect
 	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922 // indirect
 	google.golang.org/grpc v1.18.0
 	honnef.co/go/tools v0.0.0-20190128043916-71123fcbb8fe // indirect

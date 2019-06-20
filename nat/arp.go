@@ -7,6 +7,7 @@ package nat
 import (
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 func (port *ipPort) handleARP(pkt *packet.Packet) uint {
@@ -14,32 +15,32 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 
 	if packet.SwapBytesUint16(arp.Operation) != packet.ARPRequest {
 		if packet.SwapBytesUint16(arp.Operation) == packet.ARPReply {
-			ipv4 := packet.SwapBytesUint32(packet.ArrayToIPv4(arp.SPA))
+			ipv4 := packet.SwapBytesIPv4Addr(types.ArrayToIPv4(arp.SPA))
 			port.arpTable.Store(ipv4, arp.SHA)
 		}
 		if port.KNIName != "" {
-			return dirKNI
+			return DirKNI
 		}
-		return dirDROP
+		return DirDROP
 	}
 
 	// If there is a KNI interface, direct all ARP traffic to it
 	if port.KNIName != "" {
-		return dirKNI
+		return DirKNI
 	}
 
 	// Check that someone is asking about MAC of my IP address and HW
 	// address is blank in request
-	if packet.BytesToIPv4(arp.TPA[0], arp.TPA[1], arp.TPA[2], arp.TPA[3]) != packet.SwapBytesUint32(port.Subnet.Addr) {
-		println("Warning! Got an ARP packet with target IPv4 address", StringIPv4Array(arp.TPA),
-			"different from IPv4 address on interface. Should be", StringIPv4Int(port.Subnet.Addr),
+	if types.BytesToIPv4(arp.TPA[0], arp.TPA[1], arp.TPA[2], arp.TPA[3]) != packet.SwapBytesIPv4Addr(port.Subnet.Addr) {
+		println("Warning! Got an ARP packet with target IPv4 address", types.IPv4ArrayToString(arp.TPA),
+			"different from IPv4 address on interface. Should be", port.Subnet.Addr.String(),
 			". ARP request ignored.")
-		return dirDROP
+		return DirDROP
 	}
-	if arp.THA != [common.EtherAddrLen]byte{} {
-		println("Warning! Got an ARP packet with non-zero MAC address", StringMAC(arp.THA),
+	if arp.THA != (types.MACAddress{}) {
+		println("Warning! Got an ARP packet with non-zero MAC address", arp.THA.String(),
 			". ARP request ignored.")
-		return dirDROP
+		return DirDROP
 	}
 
 	// Prepare an answer to this request
@@ -48,39 +49,43 @@ func (port *ipPort) handleARP(pkt *packet.Packet) uint {
 		common.LogFatal(common.Debug, err)
 	}
 
-	packet.InitARPReplyPacket(answerPacket, port.SrcMACAddress, arp.SHA, packet.ArrayToIPv4(arp.TPA), packet.ArrayToIPv4(arp.SPA))
+	packet.InitARPReplyPacket(answerPacket, port.SrcMACAddress, arp.SHA, types.ArrayToIPv4(arp.TPA), types.ArrayToIPv4(arp.SPA))
 	vlan := pkt.GetVLAN()
 	if vlan != nil {
 		answerPacket.AddVLANTag(packet.SwapBytesUint16(vlan.TCI))
 	}
 
-	port.dumpPacket(answerPacket, dirSEND)
+	port.dumpPacket(answerPacket, DirSEND)
 	answerPacket.SendPacket(port.Index)
 
-	return dirDROP
+	return DirDROP
 }
 
-func (port *ipPort) getMACForIPv4(ip uint32) (macAddress, bool) {
-	v, found := port.arpTable.Load(ip)
-	if found {
-		return macAddress(v.([common.EtherAddrLen]byte)), true
+func (port *ipPort) getMACForIPv4(ip types.IPv4Address) (types.MACAddress, bool) {
+	if port.staticArpMode {
+		return port.DstMACAddress, true
+	} else {
+		v, found := port.arpTable.Load(ip)
+		if found {
+			return v.(types.MACAddress), true
+		}
+		port.sendARPRequest(ip)
+		return types.MACAddress{}, false
 	}
-	port.sendARPRequest(ip)
-	return macAddress{}, false
 }
 
-func (port *ipPort) sendARPRequest(ip uint32) {
+func (port *ipPort) sendARPRequest(ip types.IPv4Address) {
 	requestPacket, err := packet.NewPacket()
 	if err != nil {
 		common.LogFatal(common.Debug, err)
 	}
 
 	packet.InitARPRequestPacket(requestPacket, port.SrcMACAddress,
-		packet.SwapBytesUint32(port.Subnet.Addr), packet.SwapBytesUint32(ip))
+		packet.SwapBytesIPv4Addr(port.Subnet.Addr), packet.SwapBytesIPv4Addr(ip))
 	if port.Vlan != 0 {
 		requestPacket.AddVLANTag(port.Vlan)
 	}
 
-	port.dumpPacket(requestPacket, dirSEND)
+	port.dumpPacket(requestPacket, DirSEND)
 	requestPacket.SendPacket(port.Index)
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface{}) uint {
@@ -17,11 +18,11 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	var requestCode uint8
 	var packetSentToUs bool
 	var packetSentToMulticast bool
-	if protocol == common.ICMPNumber {
-		if packet.SwapBytesUint32(pkt.GetIPv4NoCheck().DstAddr) == port.Subnet.Addr {
+	if protocol == types.ICMPNumber {
+		if packet.SwapBytesIPv4Addr(pkt.GetIPv4NoCheck().DstAddr) == port.Subnet.Addr {
 			packetSentToUs = true
 		}
-		requestCode = common.ICMPTypeEchoRequest
+		requestCode = types.ICMPTypeEchoRequest
 	} else {
 		// If message is not targeted at NAT host, it is subject of
 		// address translation
@@ -33,16 +34,16 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 			ipv6.DstAddr == port.Subnet6.llMulticastAddr {
 			packetSentToMulticast = true
 		}
-		requestCode = common.ICMPv6TypeEchoRequest
+		requestCode = types.ICMPv6TypeEchoRequest
 	}
 
-	ipv6 := protocol == common.ICMPv6Number
+	ipv6 := protocol == types.ICMPv6Number
 
 	// Check IPv6 Neighbor Discovery first. If packet is handled, it
 	// returns DROP or KNI, otherwise continue to process it.
 	if packetSentToMulticast || (packetSentToUs && ipv6) {
 		dir := port.handleIPv6NeighborDiscovery(pkt)
-		if dir != dirSEND {
+		if dir != DirSEND {
 			return dir
 		}
 	}
@@ -58,7 +59,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 		if key != nil {
 			_, ok := port.translationTable[protocol].Load(key)
 			if !ok || time.Since(port.getPortmap(ipv6, protocol)[packet.SwapBytesUint16(icmp.Identifier)].lastused) > connectionTimeout {
-				return dirKNI
+				return DirKNI
 			}
 		}
 	}
@@ -68,7 +69,7 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	// normal way. Maybe these are packets which should be passed
 	// through translation.
 	if !packetSentToUs || icmp.Type != requestCode || icmp.Code != 0 {
-		return dirSEND
+		return DirSEND
 	}
 
 	// Return a packet back to sender
@@ -79,19 +80,19 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	packet.GeneratePacketFromByte(answerPacket, pkt.GetRawPacketBytes())
 
 	answerPacket.ParseL3CheckVLAN()
-	if protocol == common.ICMPNumber {
+	if protocol == types.ICMPNumber {
 		swapAddrIPv4(answerPacket)
 		answerPacket.ParseL4ForIPv4()
-		(answerPacket.GetICMPNoCheck()).Type = common.ICMPTypeEchoResponse
+		(answerPacket.GetICMPNoCheck()).Type = types.ICMPTypeEchoResponse
 		setIPv4ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
 	} else {
 		swapAddrIPv6(answerPacket)
 		answerPacket.ParseL4ForIPv6()
-		(answerPacket.GetICMPNoCheck()).Type = common.ICMPv6TypeEchoResponse
+		(answerPacket.GetICMPNoCheck()).Type = types.ICMPv6TypeEchoResponse
 		setIPv6ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
 	}
 
-	port.dumpPacket(answerPacket, dirSEND)
+	port.dumpPacket(answerPacket, DirSEND)
 	answerPacket.SendPacket(port.Index)
-	return dirDROP
+	return DirDROP
 }

@@ -15,6 +15,7 @@ import (
 
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 type dhcpv6State struct {
@@ -28,13 +29,13 @@ const (
 )
 
 var (
-	BroadcastIPv6 = [common.IPv6AddrLen]uint8{
+	BroadcastIPv6 = types.IPv6Address{
 		0xff, 0x02, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00,
 		0x00, 0x01, 0x00, 0x02,
 	}
-	SingleIPMask = [common.IPv6AddrLen]uint8{
+	SingleIPMask = types.IPv6Address{
 		0xff, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff,
@@ -116,7 +117,7 @@ func (port *ipPort) composeAndSendDHCPv6Packet(packetType layers.DHCPv6MsgType, 
 	}
 
 	setIPv6UDPChecksum(pkt, !NoCalculateChecksum, !NoHWTXChecksum)
-	port.dumpPacket(pkt, dirSEND)
+	port.dumpPacket(pkt, DirSEND)
 	pkt.SendPacket(port.Index)
 
 	port.Subnet6.ds.lastDHCPv6PacketTypeSent = packetType

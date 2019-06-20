@@ -3,7 +3,7 @@
 if [ -z "${NFF_GO}" ]
 then
 	echo "You need to define NFF_GO variable which points to root of built NFF_GO repository."
-	exit 1
+	return 1
 fi
 
 export RTE_TARGET=x86_64-native-linuxapp-gcc

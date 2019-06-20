@@ -1,0 +1,40 @@
+{
+    "port-pairs": [
+        {
+            "private-port": {
+                "index": 0,
+                "subnet": "192.168.14.1/24",
+                "subnet6": "fd14::1/64",
+                "dst-mac": "52:54:00:5f:07:84"
+            },
+            "public-port": {
+                "index": 1,
+                "subnet": "192.168.16.1/24",
+                "subnet6": "fd16::1/64",
+                "dst-mac": "52:54:00:7f:03:b7",
+                "forward-ports": [
+                    {
+                        "port": 8080,
+                        "destination": "192.168.14.2:80",
+                        "protocol": "TCP"
+                    },
+                    {
+                        "port": 8080,
+                        "destination": "[fd14::2]:80",
+                        "protocol": "TCP6"
+                    },
+                    {
+                        "port": 2222,
+                        "destination": "192.168.14.2:22",
+                        "protocol": "TCP"
+                    },
+                    {
+                        "port": 2222,
+                        "destination": "[fd14::2]:22",
+                        "protocol": "TCP6"
+                    }
+                ]
+            }
+        }
+    ]
+}

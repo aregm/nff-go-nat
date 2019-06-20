@@ -1,0 +1,38 @@
+{
+    "port-pairs": [
+        {
+            "private-port": {
+                "index": 0,
+                "subnet": "10.0.14.10/24",
+                "subnet6": "2600:1f16:80:ad14::10/64"
+            },
+            "public-port": {
+                "index": 1,
+                "subnet": "10.0.16.10/24",
+                "subnet6": "2600:1f16:80:ad16::10/64",
+                "forward-ports": [
+                    {
+                        "port": 8080,
+                        "destination": "10.0.14.20:80",
+                        "protocol": "TCP"
+                    },
+                    {
+                        "port": 8080,
+                        "destination": "[2600:1f16:80:ad14::20]:80",
+                        "protocol": "TCP6"
+                    },
+                    {
+                        "port": 2222,
+                        "destination": "10.0.14.20:22",
+                        "protocol": "TCP"
+                    },
+                    {
+                        "port": 2222,
+                        "destination": "[2600:1f16:80:ad14::20]:22",
+                        "protocol": "TCP6"
+                    }
+                ]
+            }
+        }
+    ]
+}

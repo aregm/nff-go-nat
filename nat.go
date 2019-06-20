@@ -15,7 +15,30 @@ import (
 	"github.com/intel-go/nff-go-nat/nat"
 )
 
+type DumpControlArray [nat.DirKNI + 1]bool
+
+func (drc *DumpControlArray) String() string {
+	return ""
+}
+
+func (drc *DumpControlArray) Set(value string) error {
+	fmt.Println("Input: ", value)
+	for _, c := range value {
+		if c == 'd' {
+			(*drc)[nat.DirDROP] = true
+		} else if c == 't' {
+			(*drc)[nat.DirSEND] = true
+		} else if c == 'k' {
+			(*drc)[nat.DirKNI] = true
+		} else {
+			return fmt.Errorf("Bad dump control flag character: \"%v\"", c)
+		}
+	}
+	return nil
+}
+
 func main() {
+	var dumpControl DumpControlArray
 	// Parse arguments
 	cores := flag.String("cores", "", "Specify CPU cores to use.")
 	configFile := flag.String("config", "config.json", "Specify config file name.")
@@ -25,7 +48,14 @@ func main() {
 	setKniIP := flag.Bool("set-kni-IP", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
 	bringUpKniInterfaces := flag.Bool("bring-up-kni", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
 	dpdkLogLevel := flag.String("dpdk", "--log-level=0", "Passes an arbitrary argument to dpdk EAL.")
+	flag.Var(&dumpControl, "dump", `Enable dump pcap output in a form of letter flags,
+e.g. "-dump d" or "-dump dtk":
+    d means to trace dropped packets,
+    t means to trace translated (normally sent) packets,
+    k means to trace packets that were sent to KNI interface.`)
 	flag.Parse()
+
+	nat.DumpEnabled = dumpControl
 
 	// Set up reaction to SIGINT (Ctrl-C)
 	c := make(chan os.Signal, 1)
