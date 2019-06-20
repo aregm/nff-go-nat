@@ -7,16 +7,17 @@ package nat
 import (
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 	icmp := pkt.GetICMPNoCheck()
-	if icmp.Type == common.ICMPv6NeighborSolicitation {
+	if icmp.Type == types.ICMPv6NeighborSolicitation {
 		// If there is KNI interface, forward all of this here
 		if port.KNIName != "" {
 			return DirKNI
 		}
-		pkt.ParseL7(common.ICMPv6Number)
+		pkt.ParseL7(types.ICMPv6Number)
 		msg := pkt.GetICMPv6NeighborSolicitationMessage()
 		if msg.TargetAddr != port.Subnet6.Addr && msg.TargetAddr != port.Subnet6.llAddr {
 			return DirDROP
@@ -39,8 +40,8 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 			port.dumpPacket(answerPacket, DirSEND)
 			answerPacket.SendPacket(port.Index)
 		}
-	} else if icmp.Type == common.ICMPv6NeighborAdvertisement {
-		pkt.ParseL7(common.ICMPv6Number)
+	} else if icmp.Type == types.ICMPv6NeighborAdvertisement {
+		pkt.ParseL7(types.ICMPv6Number)
 		msg := pkt.GetICMPv6NeighborAdvertisementMessage()
 		option := pkt.GetICMPv6NDTargetLinkLayerAddressOption(packet.ICMPv6NeighborAdvertisementMessageSize)
 		if option != nil && option.Type == packet.ICMPv6NDTargetLinkLayerAddress {
@@ -57,20 +58,20 @@ func (port *ipPort) handleIPv6NeighborDiscovery(pkt *packet.Packet) uint {
 	return DirDROP
 }
 
-func (port *ipPort) getMACForIPv6(ip [common.IPv6AddrLen]uint8) (macAddress, bool) {
+func (port *ipPort) getMACForIPv6(ip types.IPv6Address) (types.MACAddress, bool) {
 	if port.staticArpMode {
 		return port.DstMACAddress, true
 	} else {
 		v, found := port.arpTable.Load(ip)
 		if found {
-			return macAddress(v.([common.EtherAddrLen]byte)), true
+			return v.(types.MACAddress), true
 		}
 		port.sendNDNeighborSolicitationRequest(ip)
-		return macAddress{}, false
+		return types.MACAddress{}, false
 	}
 }
 
-func (port *ipPort) sendNDNeighborSolicitationRequest(ip [common.IPv6AddrLen]uint8) {
+func (port *ipPort) sendNDNeighborSolicitationRequest(ip types.IPv6Address) {
 	requestPacket, err := packet.NewPacket()
 	if err != nil {
 		common.LogFatal(common.Debug, err)

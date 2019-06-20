@@ -9,6 +9,7 @@ import (
 
 	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface{}) uint {
@@ -17,11 +18,11 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	var requestCode uint8
 	var packetSentToUs bool
 	var packetSentToMulticast bool
-	if protocol == common.ICMPNumber {
-		if packet.SwapBytesUint32(pkt.GetIPv4NoCheck().DstAddr) == port.Subnet.Addr {
+	if protocol == types.ICMPNumber {
+		if packet.SwapBytesIPv4Addr(pkt.GetIPv4NoCheck().DstAddr) == port.Subnet.Addr {
 			packetSentToUs = true
 		}
-		requestCode = common.ICMPTypeEchoRequest
+		requestCode = types.ICMPTypeEchoRequest
 	} else {
 		// If message is not targeted at NAT host, it is subject of
 		// address translation
@@ -33,10 +34,10 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 			ipv6.DstAddr == port.Subnet6.llMulticastAddr {
 			packetSentToMulticast = true
 		}
-		requestCode = common.ICMPv6TypeEchoRequest
+		requestCode = types.ICMPv6TypeEchoRequest
 	}
 
-	ipv6 := protocol == common.ICMPv6Number
+	ipv6 := protocol == types.ICMPv6Number
 
 	// Check IPv6 Neighbor Discovery first. If packet is handled, it
 	// returns DROP or KNI, otherwise continue to process it.
@@ -79,15 +80,15 @@ func (port *ipPort) handleICMP(protocol uint8, pkt *packet.Packet, key interface
 	packet.GeneratePacketFromByte(answerPacket, pkt.GetRawPacketBytes())
 
 	answerPacket.ParseL3CheckVLAN()
-	if protocol == common.ICMPNumber {
+	if protocol == types.ICMPNumber {
 		swapAddrIPv4(answerPacket)
 		answerPacket.ParseL4ForIPv4()
-		(answerPacket.GetICMPNoCheck()).Type = common.ICMPTypeEchoResponse
+		(answerPacket.GetICMPNoCheck()).Type = types.ICMPTypeEchoResponse
 		setIPv4ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
 	} else {
 		swapAddrIPv6(answerPacket)
 		answerPacket.ParseL4ForIPv6()
-		(answerPacket.GetICMPNoCheck()).Type = common.ICMPv6TypeEchoResponse
+		(answerPacket.GetICMPNoCheck()).Type = types.ICMPv6TypeEchoResponse
 		setIPv6ICMPChecksum(answerPacket, !NoCalculateChecksum, !NoHWTXChecksum)
 	}
 

@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/flow"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 
 	upd "github.com/intel-go/nff-go-nat/updatecfg"
 )
@@ -40,13 +40,13 @@ const (
 )
 
 var (
-	zeroIPv6Addr             = [common.IPv6AddrLen]uint8{}
+	zeroIPv6Addr             = types.IPv6Address{}
 	portReuseSetLastusedTime = time.Duration(portReuseTimeout - connectionTimeout)
 )
 
 type hostPort struct {
-	Addr4 uint32
-	Addr6 [common.IPv6AddrLen]uint8
+	Addr4 types.IPv4Address
+	Addr6 types.IPv6Address
 	Port  uint16
 	ipv6  bool
 }
@@ -64,19 +64,19 @@ type forwardedPort struct {
 
 var protocolIdLookup map[string]protocolId = map[string]protocolId{
 	"TCP": protocolId{
-		id:   common.TCPNumber,
+		id:   types.TCPNumber,
 		ipv6: false,
 	},
 	"UDP": protocolId{
-		id:   common.UDPNumber,
+		id:   types.UDPNumber,
 		ipv6: false,
 	},
 	"TCP6": protocolId{
-		id:   common.TCPNumber,
+		id:   types.TCPNumber,
 		ipv6: true,
 	},
 	"UDP6": protocolId{
-		id:   common.UDPNumber,
+		id:   types.UDPNumber,
 		ipv6: true,
 	},
 }
@@ -97,8 +97,8 @@ func (out *protocolId) UnmarshalJSON(b []byte) error {
 }
 
 type ipv4Subnet struct {
-	Addr            uint32
-	Mask            uint32
+	Addr            types.IPv4Address
+	Mask            types.IPv4Address
 	addressAcquired bool
 	kniAddressSet   bool
 	ds              dhcpState
@@ -107,15 +107,15 @@ type ipv4Subnet struct {
 func (fp *forwardedPort) String() string {
 	return fmt.Sprintf("Port:%d, Destination IPv4: %v, Destination IPv6: %v, Protocol: %d",
 		fp.Port,
-		packet.IPv4ToString(fp.Destination.Addr4),
-		packet.IPv6ToString(fp.Destination.Addr6),
+		fp.Destination.Addr4.String(),
+		fp.Destination.Addr6.String(),
 		fp.Protocol)
 }
 
 func (subnet *ipv4Subnet) String() string {
 	if subnet.addressAcquired {
 		// Count most significant set bits
-		mask := uint32(1) << 31
+		mask := types.IPv4Address(1) << 31
 		i := 0
 		for ; i <= 32; i++ {
 			if subnet.Mask&mask == 0 {
@@ -123,21 +123,21 @@ func (subnet *ipv4Subnet) String() string {
 			}
 			mask >>= 1
 		}
-		return packet.IPv4ToString(packet.SwapBytesUint32(subnet.Addr)) + "/" + strconv.Itoa(i)
+		return subnet.Addr.String() + "/" + strconv.Itoa(i)
 	}
 	return "DHCP address not acquired"
 }
 
-func (subnet *ipv4Subnet) checkAddrWithingSubnet(addr uint32) bool {
+func (subnet *ipv4Subnet) checkAddrWithingSubnet(addr types.IPv4Address) bool {
 	return addr&subnet.Mask == subnet.Addr&subnet.Mask
 }
 
 type ipv6Subnet struct {
-	Addr            [common.IPv6AddrLen]uint8
-	multicastAddr   [common.IPv6AddrLen]uint8
-	Mask            [common.IPv6AddrLen]uint8
-	llAddr          [common.IPv6AddrLen]uint8
-	llMulticastAddr [common.IPv6AddrLen]uint8
+	Addr            types.IPv6Address
+	multicastAddr   types.IPv6Address
+	Mask            types.IPv6Address
+	llAddr          types.IPv6Address
+	llMulticastAddr types.IPv6Address
 	addressAcquired bool
 	kniAddressSet   bool
 	ds              dhcpv6State
@@ -153,24 +153,22 @@ func (subnet *ipv6Subnet) String() string {
 				break
 			}
 		}
-		return packet.IPv6ToString(subnet.Addr) + "/" + strconv.Itoa(i)
+		return subnet.Addr.String() + "/" + strconv.Itoa(i)
 	}
 	return "DHCP address not acquired"
 }
 
-func (subnet *ipv6Subnet) andMask(addr [common.IPv6AddrLen]uint8) [common.IPv6AddrLen]uint8 {
-	var result [common.IPv6AddrLen]uint8
+func (subnet *ipv6Subnet) andMask(addr types.IPv6Address) types.IPv6Address {
+	var result types.IPv6Address
 	for i := range addr {
 		result[i] = addr[i] & subnet.Mask[i]
 	}
 	return result
 }
 
-func (subnet *ipv6Subnet) checkAddrWithingSubnet(addr [common.IPv6AddrLen]uint8) bool {
+func (subnet *ipv6Subnet) checkAddrWithingSubnet(addr types.IPv6Address) bool {
 	return subnet.andMask(addr) == subnet.andMask(subnet.Addr)
 }
-
-type macAddress [common.EtherAddrLen]uint8
 
 type portMapEntry struct {
 	lastused             time.Time
@@ -181,15 +179,15 @@ type portMapEntry struct {
 
 // Type describing a network port
 type ipPort struct {
-	Index         uint16          `json:"index"`
-	Subnet        ipv4Subnet      `json:"subnet"`
-	Subnet6       ipv6Subnet      `json:"subnet6"`
-	Vlan          uint16          `json:"vlan-tag"`
-	KNIName       string          `json:"kni-name"`
-	ForwardPorts  []forwardedPort `json:"forward-ports"`
-	DstMACAddress macAddress      `json:"dst-mac"`
+	Index         uint16           `json:"index"`
+	Subnet        ipv4Subnet       `json:"subnet"`
+	Subnet6       ipv6Subnet       `json:"subnet6"`
+	Vlan          uint16           `json:"vlan-tag"`
+	KNIName       string           `json:"kni-name"`
+	ForwardPorts  []forwardedPort  `json:"forward-ports"`
+	DstMACAddress types.MACAddress `json:"dst-mac"`
 	staticArpMode bool
-	SrcMACAddress macAddress
+	SrcMACAddress types.MACAddress
 	Type          interfaceType
 	// Pointer to an opposite port in a pair
 	opposite *ipPort
@@ -253,15 +251,14 @@ func (pi pairIndex) Copy() interface{} {
 func (pi pairIndex) Delete() {
 }
 
-func convertIPv4(in []byte) (uint32, error) {
+// Returns IPv4 address in little endian format. Needs swap before
+// assigning to IPv4 header fields.
+func convertIPv4(in []byte) (types.IPv4Address, error) {
 	if in == nil || len(in) > 4 {
 		return 0, fmt.Errorf("Only IPv4 addresses are supported now while your address has %d bytes", len(in))
 	}
 
-	addr := (uint32(in[0]) << 24) | (uint32(in[1]) << 16) |
-		(uint32(in[2]) << 8) | uint32(in[3])
-
-	return addr, nil
+	return types.BytesToIPv4(in[3], in[2], in[1], in[0]), nil
 }
 
 // UnmarshalJSON parses ipv 4 subnet details.
@@ -272,8 +269,8 @@ func (out *ipv4Subnet) UnmarshalJSON(b []byte) error {
 	}
 
 	if s == "dhcp" {
-		out.Addr = uint32(0)
-		out.Mask = uint32(0)
+		out.Addr = types.IPv4Address(0)
+		out.Mask = types.IPv4Address(0)
 		out.addressAcquired = false
 		return nil
 	}
@@ -309,8 +306,8 @@ func (out *ipv6Subnet) UnmarshalJSON(b []byte) error {
 	}
 
 	if s == "dhcp" {
-		out.Addr = [common.IPv6AddrLen]uint8{}
-		out.Mask = [common.IPv6AddrLen]uint8{}
+		out.Addr = types.IPv6Address{}
+		out.Mask = types.IPv6Address{}
 		out.addressAcquired = false
 		return nil
 	}
@@ -330,7 +327,7 @@ func (out *ipv6Subnet) UnmarshalJSON(b []byte) error {
 			return fmt.Errorf("Bad IPv6 address: %s", s)
 		}
 		copy(out.Addr[:], ip.To16())
-		out.Mask = [common.IPv6AddrLen]uint8{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
+		out.Mask = types.IPv6Address{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}
 		out.addressAcquired = true
 		return nil
 	}
@@ -374,22 +371,6 @@ func (out *hostPort) UnmarshalJSON(b []byte) error {
 		out.Port = 0
 	}
 
-	return nil
-}
-
-// UnmarshalJSON parses MAC address.
-func (out *macAddress) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-
-	hw, err := net.ParseMAC(s)
-	if err != nil {
-		return err
-	}
-
-	copy(out[:], hw)
 	return nil
 }
 
@@ -459,10 +440,10 @@ func ReadConfig(fileName string, setKniIP, bringUpKniInterfaces bool) error {
 					return err
 				}
 			}
-			if port.DstMACAddress != [common.EtherAddrLen]uint8{} {
+			if port.DstMACAddress != (types.MACAddress{}) {
 				port.staticArpMode = true
 				fmt.Printf("Activating static ARP mode for port %d, using %s MAC address\n",
-					port.Index, packet.MACToString(port.DstMACAddress))
+					port.Index, port.DstMACAddress.String())
 			}
 			port = &pp.PublicPort
 		}
@@ -503,14 +484,14 @@ func (port *ipPort) checkPortForwarding(fp *forwardedPort) error {
 		if fp.Destination.ipv6 {
 			if !port.opposite.Subnet6.checkAddrWithingSubnet(fp.Destination.Addr6) {
 				return errors.New("Destination address " +
-					packet.IPv6ToString(fp.Destination.Addr6) +
+					fp.Destination.Addr6.String() +
 					" should be within subnet " +
 					port.opposite.Subnet6.String())
 			}
 		} else {
 			if !port.opposite.Subnet.checkAddrWithingSubnet(fp.Destination.Addr4) {
 				return errors.New("Destination address " +
-					packet.IPv4ToString(fp.Destination.Addr4) +
+					fp.Destination.Addr4.String() +
 					" should be within subnet " +
 					port.opposite.Subnet.String())
 			}
@@ -531,24 +512,24 @@ func (pp *portPair) initLocalMACs() {
 
 func (port *ipPort) initIPv6LLAddresses() {
 	packet.CalculateIPv6LinkLocalAddrForMAC(&port.Subnet6.llAddr, port.SrcMACAddress)
-	println("Configured link local address", packet.IPv6ToString(port.Subnet6.llAddr), "for port", port.Index)
+	println("Configured link local address", port.Subnet6.llAddr.String(), "for port", port.Index)
 	packet.CalculateIPv6MulticastAddrForDstIP(&port.Subnet6.llMulticastAddr, port.Subnet6.llAddr)
-	println("Configured link local multicast address", packet.IPv6ToString(port.Subnet6.llMulticastAddr), "for port", port.Index)
+	println("Configured link local multicast address", port.Subnet6.llMulticastAddr.String(), "for port", port.Index)
 	if port.Subnet6.Addr != zeroIPv6Addr {
 		packet.CalculateIPv6MulticastAddrForDstIP(&port.Subnet6.multicastAddr, port.Subnet6.Addr)
-		println("Configured multicast address", packet.IPv6ToString(port.Subnet6.multicastAddr), "for port", port.Index)
+		println("Configured multicast address", port.Subnet6.multicastAddr.String(), "for port", port.Index)
 	}
 }
 
 func (port *ipPort) allocatePublicPortPortMap() {
 	port.portmap = make([][]portMapEntry, 256)
-	port.portmap[common.ICMPNumber] = make([]portMapEntry, portEnd)
-	port.portmap[common.TCPNumber] = make([]portMapEntry, portEnd)
-	port.portmap[common.UDPNumber] = make([]portMapEntry, portEnd)
+	port.portmap[types.ICMPNumber] = make([]portMapEntry, portEnd)
+	port.portmap[types.TCPNumber] = make([]portMapEntry, portEnd)
+	port.portmap[types.UDPNumber] = make([]portMapEntry, portEnd)
 	port.portmap6 = make([][]portMapEntry, 256)
-	port.portmap6[common.TCPNumber] = make([]portMapEntry, portEnd)
-	port.portmap6[common.UDPNumber] = make([]portMapEntry, portEnd)
-	port.portmap6[common.ICMPv6Number] = make([]portMapEntry, portEnd)
+	port.portmap6[types.TCPNumber] = make([]portMapEntry, portEnd)
+	port.portmap6[types.UDPNumber] = make([]portMapEntry, portEnd)
+	port.portmap6[types.ICMPv6Number] = make([]portMapEntry, portEnd)
 }
 
 func (port *ipPort) allocateLookupMap() {
@@ -714,7 +695,13 @@ func CheckHWOffloading() bool {
 		ports = append(ports, pp.PublicPort.Index, pp.PrivatePort.Index)
 	}
 
-	return flow.CheckHWCapability(flow.HWTXChecksumCapability, ports)
+	capabilities := flow.CheckHWCapability(flow.HWTXChecksumCapability, ports)
+	for _, c := range capabilities {
+		if !c {
+			return false
+		}
+	}
+	return true
 }
 
 func (c *Config) getPortAndPairByID(portId uint32) (*ipPort, *portPair) {

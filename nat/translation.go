@@ -7,34 +7,34 @@ package nat
 import (
 	"time"
 
-	"github.com/intel-go/nff-go/common"
 	"github.com/intel-go/nff-go/flow"
 	"github.com/intel-go/nff-go/packet"
+	"github.com/intel-go/nff-go/types"
 )
 
 // Tuple is a pair of address and port.
 type Tuple struct {
-	addr uint32
+	addr types.IPv4Address
 	port uint16
 }
 
 type Tuple6 struct {
-	addr [common.IPv6AddrLen]uint8
+	addr types.IPv6Address
 	port uint16
 }
 
-func (pp *portPair) allocateNewEgressConnection(ipv6 bool, protocol uint8, privEntry interface{}) (uint32, [common.IPv6AddrLen]uint8, uint16, error) {
+func (pp *portPair) allocateNewEgressConnection(ipv6 bool, protocol uint8, privEntry interface{}) (types.IPv4Address, types.IPv6Address, uint16, error) {
 	pp.mutex.Lock()
 
 	port, err := pp.allocNewPort(ipv6, protocol)
 	if err != nil {
 		pp.mutex.Unlock()
-		return 0, [common.IPv6AddrLen]uint8{}, 0, err
+		return 0, types.IPv6Address{}, 0, err
 	}
 
 	var pubEntry interface{}
-	var v4addr uint32
-	var v6addr [common.IPv6AddrLen]uint8
+	var v4addr types.IPv4Address
+	var v6addr types.IPv6Address
 	if ipv6 {
 		v6addr = pp.PublicPort.Subnet6.Addr
 		pubEntry = Tuple6{
@@ -162,7 +162,7 @@ func PublicToPrivateTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 		}
 
 		// Find corresponding MAC address
-		var mac macAddress
+		var mac types.MACAddress
 		var found bool
 		if ipv6 {
 			mac, found = port.opposite.getMACForIPv6(v6addr)
@@ -183,7 +183,7 @@ func PublicToPrivateTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 		if ipv6 {
 			pktIPv6.DstAddr = v6addr
 		} else {
-			pktIPv4.DstAddr = packet.SwapBytesUint32(v4addr)
+			pktIPv4.DstAddr = packet.SwapBytesIPv4Addr(v4addr)
 		}
 		setPacketDstPort(pkt, ipv6, newPort, pktTCP, pktUDP, pktICMP)
 
@@ -252,7 +252,7 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 			port.Subnet6.llMulticastAddr == pktIPv6.DstAddr
 	} else {
 		addressAcquired = port.Subnet.addressAcquired
-		packetSentToUs = port.Subnet.Addr == packet.SwapBytesUint32(pktIPv4.DstAddr)
+		packetSentToUs = port.Subnet.Addr == packet.SwapBytesIPv4Addr(pktIPv4.DstAddr)
 	}
 
 	// If traffic is directed at private interface IP and KNI is
@@ -265,8 +265,8 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 	// Do lookup
 	v, found := port.translationTable[protocol].Load(pri2pubKey)
 
-	var v4addr uint32
-	var v6addr [common.IPv6AddrLen]uint8
+	var v4addr types.IPv4Address
+	var v6addr types.IPv6Address
 	var newPort uint16
 	var zeroAddr bool
 
@@ -309,12 +309,12 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 		}
 
 		// Find corresponding MAC address
-		var mac macAddress
+		var mac types.MACAddress
 		var found bool
 		if pktIPv6 != nil {
 			mac, found = port.opposite.getMACForIPv6(pktIPv6.DstAddr)
 		} else {
-			mac, found = port.opposite.getMACForIPv4(packet.SwapBytesUint32(pktIPv4.DstAddr))
+			mac, found = port.opposite.getMACForIPv4(packet.SwapBytesIPv4Addr(pktIPv4.DstAddr))
 		}
 		if !found {
 			port.dumpPacket(pkt, DirDROP)
@@ -330,7 +330,7 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 		if ipv6 {
 			pktIPv6.SrcAddr = v6addr
 		} else {
-			pktIPv4.SrcAddr = packet.SwapBytesUint32(v4addr)
+			pktIPv4.SrcAddr = packet.SwapBytesIPv4Addr(v4addr)
 		}
 		setPacketSrcPort(pkt, ipv6, newPort, pktTCP, pktUDP, pktICMP)
 
@@ -345,11 +345,10 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 // Used to generate key in public to private translation
 func generateLookupKeyFromDstAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packet.IPv6Hdr, port uint16) interface{} {
 	if pktIPv4 != nil {
-		key := Tuple{
-			addr: packet.SwapBytesUint32(pktIPv4.DstAddr),
+		return Tuple{
+			addr: packet.SwapBytesIPv4Addr(pktIPv4.DstAddr),
 			port: port,
 		}
-		return key
 	} else {
 		return Tuple6{
 			addr: pktIPv6.DstAddr,
@@ -361,7 +360,7 @@ func generateLookupKeyFromDstAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, p
 // Used to generate key in private to public translation
 func generateLookupKeyFromSrcAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packet.IPv6Hdr, port uint16) (interface{}, interface{}) {
 	if pktIPv4 != nil {
-		saddr := packet.SwapBytesUint32(pktIPv4.SrcAddr)
+		saddr := packet.SwapBytesIPv4Addr(pktIPv4.SrcAddr)
 		return Tuple{
 			addr: saddr,
 			port: port,
@@ -376,11 +375,11 @@ func generateLookupKeyFromSrcAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, p
 
 // Simple check for FIN or RST in TCP
 func (pp *portPair) checkTCPTermination(ipv6 bool, hdr *packet.TCPHdr, port int, dir terminationDirection) {
-	if hdr.TCPFlags&common.TCPFlagFin != 0 {
+	if hdr.TCPFlags&types.TCPFlagFin != 0 {
 		// First check for FIN
 		pp.mutex.Lock()
 
-		pme := &pp.getPublicPortPortmap(ipv6, common.TCPNumber)[port]
+		pme := &pp.getPublicPortPortmap(ipv6, types.TCPNumber)[port]
 		if pme.finCount == 0 {
 			pme.finCount = 1
 			pme.terminationDirection = dir
@@ -389,20 +388,20 @@ func (pp *portPair) checkTCPTermination(ipv6 bool, hdr *packet.TCPHdr, port int,
 		}
 
 		pp.mutex.Unlock()
-	} else if hdr.TCPFlags&common.TCPFlagRst != 0 {
+	} else if hdr.TCPFlags&types.TCPFlagRst != 0 {
 		// RST means that connection is terminated immediately
 		pp.mutex.Lock()
-		pp.deleteOldConnection(ipv6, common.TCPNumber, port)
+		pp.deleteOldConnection(ipv6, types.TCPNumber, port)
 		pp.mutex.Unlock()
-	} else if hdr.TCPFlags&common.TCPFlagAck != 0 {
+	} else if hdr.TCPFlags&types.TCPFlagAck != 0 {
 		// Check for ACK last so that if there is also FIN,
 		// termination doesn't happen. Last ACK should come without
 		// FIN
 		pp.mutex.Lock()
 
-		pme := &pp.getPublicPortPortmap(ipv6, common.TCPNumber)[port]
+		pme := &pp.getPublicPortPortmap(ipv6, types.TCPNumber)[port]
 		if pme.finCount == 2 {
-			pp.deleteOldConnection(ipv6, common.TCPNumber, port)
+			pp.deleteOldConnection(ipv6, types.TCPNumber, port)
 			// Set some time while port cannot be used before
 			// connection timeout is reached
 			pme.lastused = time.Now().Add(portReuseSetLastusedTime)
@@ -432,12 +431,12 @@ func (port *ipPort) parsePacketAndCheckARP(pkt *packet.Packet) (dir uint, vlanhd
 	return DirSEND, pktVLAN, pktIPv4, nil
 }
 
-func getAddrFromTuple(v interface{}, ipv6 bool) (uint32, [common.IPv6AddrLen]uint8, uint16, bool) {
+func getAddrFromTuple(v interface{}, ipv6 bool) (types.IPv4Address, types.IPv6Address, uint16, bool) {
 	if ipv6 {
 		value := v.(Tuple6)
-		return 0, value.addr, value.port, value.addr == [common.IPv6AddrLen]uint8{}
+		return 0, value.addr, value.port, value.addr == types.IPv6Address{}
 	} else {
 		value := v.(Tuple)
-		return value.addr, [common.IPv6AddrLen]uint8{}, value.port, value.addr == 0
+		return value.addr, types.IPv6Address{}, value.port, value.addr == 0
 	}
 }
