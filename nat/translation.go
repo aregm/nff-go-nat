@@ -86,7 +86,18 @@ func PublicToPrivateTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 	}
 	portNumber := DstPort
 	// Create a lookup key from packet destination address and port
-	pub2priKey := generateLookupKeyFromDstAddr(pkt, pktIPv4, pktIPv6, portNumber)
+	var pub2priKey interface{}
+	if pktIPv4 != nil {
+		pub2priKey = Tuple{
+			addr: packet.SwapBytesIPv4Addr(pktIPv4.DstAddr),
+			port: portNumber,
+		}
+	} else {
+		pub2priKey = Tuple6{
+			addr: pktIPv6.DstAddr,
+			port: portNumber,
+		}
+	}
 	// Check for ICMP traffic first
 	if pktICMP != nil {
 		dir := port.handleICMP(protocol, pkt, pub2priKey)
@@ -217,7 +228,18 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 	}
 	portNumber := SrcPort
 	// Create a lookup key from packet source address and port
-	pri2pubKey, saddr := generateLookupKeyFromSrcAddr(pkt, pktIPv4, pktIPv6, portNumber)
+	var pri2pubKey interface{}
+	if pktIPv4 != nil {
+		pri2pubKey = Tuple{
+			addr: packet.SwapBytesIPv4Addr(pktIPv4.SrcAddr),
+			port: portNumber,
+		}
+	} else {
+		pri2pubKey = Tuple6{
+			addr: pktIPv6.SrcAddr,
+			port: portNumber,
+		}
+	}
 	// Check for ICMP traffic first
 	if pktICMP != nil {
 		dir := port.handleICMP(protocol, pkt, pri2pubKey)
@@ -271,14 +293,13 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 	var zeroAddr bool
 
 	if !found {
-		var err error
 		// Store new local network entry in ARP cache
-		port.arpTable.Store(saddr, pkt.Ether.SAddr)
-
 		var publicAddressAcquired bool
 		if ipv6 {
+			port.arpTable.Store(pktIPv6.SrcAddr, pkt.Ether.SAddr)
 			publicAddressAcquired = port.opposite.Subnet6.addressAcquired
 		} else {
+			port.arpTable.Store(pktIPv4.SrcAddr, pkt.Ether.SAddr)
 			publicAddressAcquired = port.opposite.Subnet.addressAcquired
 		}
 
@@ -288,6 +309,7 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 			port.dumpPacket(pkt, DirDROP)
 			return DirDROP
 		}
+		var err error
 		// Allocate new connection from private to public network
 		v4addr, v6addr, newPort, err = pp.allocateNewEgressConnection(pktIPv6 != nil, protocol, pri2pubKey)
 
@@ -339,37 +361,6 @@ func PrivateToPublicTranslation(pkt *packet.Packet, ctx flow.UserContext) uint {
 	} else {
 		port.dumpPacket(pkt, DirKNI)
 		return DirKNI
-	}
-}
-
-// Used to generate key in public to private translation
-func generateLookupKeyFromDstAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packet.IPv6Hdr, port uint16) interface{} {
-	if pktIPv4 != nil {
-		return Tuple{
-			addr: packet.SwapBytesIPv4Addr(pktIPv4.DstAddr),
-			port: port,
-		}
-	} else {
-		return Tuple6{
-			addr: pktIPv6.DstAddr,
-			port: port,
-		}
-	}
-}
-
-// Used to generate key in private to public translation
-func generateLookupKeyFromSrcAddr(pkt *packet.Packet, pktIPv4 *packet.IPv4Hdr, pktIPv6 *packet.IPv6Hdr, port uint16) (interface{}, interface{}) {
-	if pktIPv4 != nil {
-		saddr := packet.SwapBytesIPv4Addr(pktIPv4.SrcAddr)
-		return Tuple{
-			addr: saddr,
-			port: port,
-		}, saddr
-	} else {
-		return Tuple6{
-			addr: pktIPv6.SrcAddr,
-			port: port,
-		}, pktIPv6.SrcAddr
 	}
 }
 
