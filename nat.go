@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"runtime/pprof"
 
 	"github.com/intel-go/nff-go/flow"
 
@@ -48,12 +49,20 @@ func main() {
 	setKniIP := flag.Bool("set-kni-IP", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
 	bringUpKniInterfaces := flag.Bool("bring-up-kni", false, "Set IP addresses specified in config file to created KNI interfaces. Do not use if your system uses Network Manager! Use Network Manager configurations instead.")
 	dpdkLogLevel := flag.String("dpdk", "--log-level=0", "Passes an arbitrary argument to dpdk EAL.")
+	cpuprofile := flag.String("cpuprofile", "", "write cpu profile to file")
 	flag.Var(&dumpControl, "dump", `Enable dump pcap output in a form of letter flags,
 e.g. "-dump d" or "-dump dtk":
     d means to trace dropped packets,
     t means to trace translated (normally sent) packets,
     k means to trace packets that were sent to KNI interface.`)
 	flag.Parse()
+
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		flow.CheckFatal(err)
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 
 	nat.DumpEnabled = dumpControl
 
