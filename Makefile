@@ -4,6 +4,12 @@
 
 # --------- General build rules
 
+ifndef NFF_GO_NO_MLX_DRIVERS
+ifeq (,$(findstring mlx,$(GO_BUILD_TAGS)))
+export GO_BUILD_TAGS += mlx
+endif
+endif
+
 .PHONY: all
 all: nff-go-nat client/client httpperfserv wrk
 
@@ -12,20 +18,20 @@ debug: | .set-debug all
 
 .PHONY: .set-debug
 .set-debug:
-	$(eval GO_COMPILE_FLAGS := -gcflags=all='-N -l')
+	$(eval GO_COMPILE_FLAGS += -gcflags=all='-N -l')
 
 .check-downloads:
 	go mod download
 
 client/client: .check-env .check-downloads Makefile client/client.go
-	cd client && go build $(GO_COMPILE_FLAGS)
+	cd client && go build $(GO_COMPILE_FLAGS) -tags "${GO_BUILD_TAGS}"
 
 nff-go-nat: .check-env .check-downloads Makefile nat.go $(wildcard nat/*.go)
-	go build $(GO_COMPILE_FLAGS)
+	go build $(GO_COMPILE_FLAGS) -tags "${GO_BUILD_TAGS}"
 
 .PHONY: httpperfserv
 httpperfserv:
-	cd test/httpperfserv && go build $(GO_COMPILE_FLAGS)
+	cd test/httpperfserv && go build $(GO_COMPILE_FLAGS) -tags "${GO_BUILD_TAGS}"
 
 .PHONY: wrk
 wrk:
