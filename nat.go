@@ -55,6 +55,9 @@ e.g. "-dump d" or "-dump dtk":
     d means to trace dropped packets,
     t means to trace translated (normally sent) packets,
     k means to trace packets that were sent to KNI interface.`)
+	schedulerInterval := flag.Uint("scheduler-interval", 500, "Set scheduler interval in ms. Lower values allow faster reaction to changing traffic but increase scheduling overhead.")
+	sendCPUCoresPerPort := flag.Int("send-threads", 1, "Number of CPU cores to be occupied by Send routines.")
+	tXQueuesNumberPerPort := flag.Int("tx-queues", 4, "Number of transmit queues to use on network card.")
 	flag.Parse()
 
 	if *cpuprofile != "" {
@@ -75,11 +78,14 @@ e.g. "-dump d" or "-dump dtk":
 
 	// Init NFF-GO system at 16 available cores
 	nffgoconfig := flow.Config{
-		CPUList:          *cores,
-		HWTXChecksum:     !nat.NoHWTXChecksum,
-		DPDKArgs:         []string{*dpdkLogLevel},
-		DisableScheduler: *noscheduler,
-		NeedKNI:          nat.NeedKNI,
+		CPUList:               *cores,
+		HWTXChecksum:          !nat.NoHWTXChecksum,
+		DPDKArgs:              []string{*dpdkLogLevel},
+		DisableScheduler:      *noscheduler,
+		NeedKNI:               nat.NeedKNI,
+		SchedulerInterval:     *schedulerInterval,
+		SendCPUCoresPerPort:   *sendCPUCoresPerPort,
+		TXQueuesNumberPerPort: *tXQueuesNumberPerPort,
 	}
 
 	flow.CheckFatal(flow.SystemInit(&nffgoconfig))
