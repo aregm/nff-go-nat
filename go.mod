@@ -19,7 +19,7 @@ require (
 	github.com/gorilla/mux v1.7.0 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0 // indirect
-	github.com/intel-go/nff-go v0.9.0
+	github.com/intel-go/nff-go v0.9.1
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/nsf/gocode v0.0.0-20181120081338-6cac7c69a41e // indirect
 	github.com/openzipkin/zipkin-go v0.1.5 // indirect
@@ -50,15 +50,15 @@ require (
 	go.opencensus.io v0.19.0 // indirect
 	go4.org v0.0.0-20181109185143-00e24f1b2599 // indirect
 	golang.org/x/build v0.0.0-20190205194203-d0914bad8ebc // indirect
-	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7 // indirect
+	golang.org/x/crypto v0.0.0-20191001170739-f9e2070545dc // indirect
 	golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2 // indirect
-	golang.org/x/net v0.0.0-20190918130420-a8b05e9114ab
+	golang.org/x/net v0.0.0-20190930134127-c5a3c61f89f3
 	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1 // indirect
 	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
-	golang.org/x/sys v0.0.0-20190919044723-0c1ff786ef13 // indirect
+	golang.org/x/sys v0.0.0-20191001151750-bb3f8db39f24 // indirect
 	golang.org/x/text v0.3.2 // indirect
-	golang.org/x/tools v0.0.0-20190920130846-1081e67f6b77 // indirect
+	golang.org/x/tools v0.0.0-20191001184121-329c8d646ebe // indirect
 	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922 // indirect
 	google.golang.org/grpc v1.18.0
 	honnef.co/go/tools v0.0.0-20190128043916-71123fcbb8fe // indirect
